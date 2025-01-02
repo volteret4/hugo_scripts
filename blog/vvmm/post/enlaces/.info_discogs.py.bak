@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+#
+# Script Name: info_discogs.py
+# Description: Obtener info de discogs para el album pasado como argumento.
+# Author: volteret4
+# Repository: https://github.com/volteret4/
+# License:
+# TODO: 
+# Notes:
+#   Dependencies: python3, requests
+#
+
+import requests
+import sys
+
+def get_album_info(master_id):
+    # Inserta tu token de API de Discogs
+    token = 'LspjLeBvGcPphiSRHHDjwmOyPNhSuvBKQChNwucQ'
+    
+    # Construye la URL para obtener información del álbum
+    album_url = f'https://api.discogs.com/masters/{master_id}?token={token}'
+    
+    # Realiza la solicitud para obtener la información del álbum
+    response = requests.get(album_url)
+    data = response.json()
+    
+    # Verifica si se encontraron resultados
+    if 'status' in data and data['status'] == 'error':
+        print(f"Error: {data['message']}")
+        return None
+    
+    # Extrae la información del álbum
+    album_info = {}
+    
+    # Fecha de lanzamiento
+    if 'year' in data:
+        album_info['Fecha de lanzamiento'] = data['year']
+    else:
+        album_info['Fecha de lanzamiento'] = "Desconocida"
+    
+    # Productor y colaboradores
+    if 'artists' in data:
+        album_info['Productor y colaboradores'] = [artist['name'] for artist in data['artists']]
+    else:
+        album_info['Productor y colaboradores'] = "Desconocidos"
+    
+    # Géneros
+    if 'genres' in data:
+        album_info['Géneros'] = data['genres']
+    else:
+        album_info['Géneros'] = "Desconocidos"
+    
+    # Estilos
+    if 'styles' in data:
+        album_info['Estilos'] = data['styles']
+    else:
+        album_info['Estilos'] = "Desconocidos"
+    
+    # Tracklist
+    if 'tracklist' in data:
+        tracklist = []
+        for track in data['tracklist']:
+            track_info = {'Título': track['title'], 'Duración': track['duration']}
+            if 'extraartists' in track:
+                track_info['Colaboradores'] = [artist['name'] for artist in track['extraartists']]
+            tracklist.append(track_info)
+        album_info['Tracklist'] = tracklist
+    else:
+        album_info['Tracklist'] = "Desconocida"
+    
+    return album_info
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Uso: python discogs_album.py [master_id]")
+        sys.exit(1)
+    
+    master_id = sys.argv[1]
+    
+    album_info = get_album_info(master_id)
+    if album_info:
+        print("Información del álbum:")
+        for key, value in album_info.items():
+            if isinstance(value, list):
+                print(f"{key}:")
+                for item in value:
+                    if isinstance(item, dict):
+                        for k, v in item.items():
+                            print(f"  {k}: {v}")
+                    else:
+                        print(f"  {item}")
+            else:
+                print(f"{key}: {value}")
+    else:
+        print(f"No se encontró información para el master_id '{master_id}'.")

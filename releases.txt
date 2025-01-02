@@ -1,0 +1,51 @@
+Listado de releases del artista:
+Deeply Rooted Vibes EP - 2014 - https://api.discogs.com/releases/9221516
+The Shadow Of Her Smile EP - 2014 - https://api.discogs.com/releases/13615767
+CellarDoor EP - 2015 - https://api.discogs.com/releases/15032799
+Chapeau Rouge - 2015 - https://api.discogs.com/masters/865906
+Oyabun EP - 2016 - https://api.discogs.com/releases/8313301
+Fort Bellefleur - 2016 - https://api.discogs.com/releases/8878991
+Make Believe Disco No. 1 - 2016 - https://api.discogs.com/masters/1076676
+Alerte à Babylone EP - 2017 - https://api.discogs.com/releases/9464406
+Nights Over You EP - 2017 - https://api.discogs.com/releases/9842503
+4MYPPL#1 - 2017 - https://api.discogs.com/releases/10161604
+Melophrenia - 2017 - https://api.discogs.com/releases/10468295
+The Power And The Blessing Of Unity EP - 2017 - https://api.discogs.com/masters/1225110
+Umami - 2017 - https://api.discogs.com/masters/1410878
+Shakkei - 2017 - https://api.discogs.com/masters/2903917
+Les Premiers Jours D'Été - 2018 - https://api.discogs.com/releases/12236689
+Club Degli Esploratori - 2018 - https://api.discogs.com/releases/12281123
+Re-Interpretations #1 - 2018 - https://api.discogs.com/releases/12455043
+Devoted To U - 2018 - https://api.discogs.com/releases/13481752
+Ordinary Drugs - 2019 - https://api.discogs.com/releases/12950315
+The Muscle - 2019 - https://api.discogs.com/masters/1074998
+I Miss Having Someone To Talk To - 2020 - https://api.discogs.com/releases/20431156
+The Journey - 2021 - https://api.discogs.com/masters/2320831
+Manifesto - 2023 - https://api.discogs.com/masters/3316435
+Doorbell - 2016 - https://api.discogs.com/releases/28268659
+Back Street Kids - 2017 - https://api.discogs.com/releases/10333864
+Everything I Do EP - 2017 - https://api.discogs.com/releases/13474174
+Jockey Club Salinas • Ibiza The Sunset Sessions #5 - 2017 - https://api.discogs.com/releases/13691238
+How U Really Feel EP - 2017 - https://api.discogs.com/masters/1755644
+Come To Me - 2018 - https://api.discogs.com/releases/11723693
+Good Afternoon Mr Magpie Remixed - 2018 - https://api.discogs.com/releases/11965843
+Black Voices Remixes - 2018 - https://api.discogs.com/releases/12126315
+Chicago Memory E.P. - 2018 - https://api.discogs.com/releases/12252367
+Keep It EP - 2018 - https://api.discogs.com/releases/12283528
+Joey Negro's 2018 Essentials - 2018 - https://api.discogs.com/releases/20800933
+FG. Ibiza Fever 2018 - 2018 - https://api.discogs.com/releases/23431844
+Castlecrag EP - 2018 - https://api.discogs.com/masters/1446811
+Resurrection (The Remixes Part Two) - 2018 - https://api.discogs.com/masters/1358141
+Shazzer Project  - The A Ep - 2019 - https://api.discogs.com/releases/14219716
+Blaze Away - The Remixes - 2019 - https://api.discogs.com/masters/1372174
+Africa  - 2019 - https://api.discogs.com/masters/1494935
+Energy Fantasy - 2019 - https://api.discogs.com/masters/1518890
+Gotta Smile (Folamour Remix) - 2019 - https://api.discogs.com/masters/1746729
+My Beat  - 2019 - https://api.discogs.com/masters/31918
+Matahari (Édition Impériale) - 2019 - https://api.discogs.com/masters/1365170
+Drum'n Voice Remixed - 2019 - https://api.discogs.com/masters/1657441
+Andy (Folamour's Italo Remix) - 2019 - https://api.discogs.com/masters/46830
+Nocturne (Remixes) - 2021 - https://api.discogs.com/masters/2417473
+Lost Toy Tonics Mixes - 2022 - https://api.discogs.com/releases/22889831
+What Would You Do? - 2022 - https://api.discogs.com/masters/2618813
+Meji Meji (Folamour Remix) - 2023 - https://api.discogs.com/releases/29238313
