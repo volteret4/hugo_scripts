@@ -18,9 +18,9 @@
 # DECLARACION DE VARIABLES:
 
 # Rutas.
-enlaces_dir="${HOME}/hugo/scripts/blog/vvmm/post/enlaces"
+enlaces_dir="${HOME}/hugo/hugo_scripts/blog/vvmm/post/enlaces"
+post_dir="${HOME}/hugo/hugo_scripts/blog/vvmm/post"
 blog="${HOME}/hugo/web/vvmm"
-post_dir="${HOME}/hugo/scripts/blog/vvmm/post"
 
 source "${HOME}/scripts/python_venv/bin/activate"
 
@@ -36,8 +36,8 @@ RESET='\033[0m'  # Restablece al color por defecto
 artista="${1}"
 albuma="${2}"
 # eliminamos caracteres no alfanumericos.....que pena no poder poner una tilde
-artist="$(bash "$HOME/hugo/scripts/limpiar_var.sh" "${artista}")"
-album="$(bash $HOME/hugo/scripts/limpiar_var.sh ${albuma})"
+artist="$(bash "$HOME/hugo/hugo_scripts//limpiar_var.sh" "${artista}")"
+album="$(bash $HOME/hugo/hugo_scripts//limpiar_var.sh ${albuma})"
 
 # .env_root: COLORES!
 #source ${HOME}/scripts/.env_root
@@ -56,26 +56,26 @@ echo -e "${YELLOW}Actualizando listado de playlists y about_file.${RESET}"
 
 about_file="$HOME/hugo/web/vvmm/content/about.md"
 
-python3 $HOME/hugo/scripts/playlists/spotify/sp_playlist.py
+python3 $HOME/hugo/hugo_scripts//playlists/spotify/sp_playlist.py
 python3 $enlaces_dir/spotify/sp_playlist_md.py
 rm "${about_file}"
 cp "${about_file}.skel" "${about_file}"
 echo "" >> $about_file
 echo "_Actualizado el "$(date +%d-%m-%Y)"_" >> $about_file
 echo "" >> $about_file
-cat $HOME/hugo/scripts/playlists/spotify/playlists.md >> $about_file
+cat $HOME/hugo/hugo_scripts//playlists/spotify/playlists.md >> $about_file
 
 # echo "# Genero"
 # echo "" >> $about_file
-# cat $HOME/hugo/scripts/playlists/spotify/playlists_genre.md >> $about_file
+# cat $HOME/hugo/hugo_scripts//playlists/spotify/playlists_genre.md >> $about_file
 # echo "" >> $about_file
 # echo "# Humor"
 # echo "" >> $about_file
-# cat $HOME/hugo/scripts/playlists/spotify/playlists_mood.md >> $about_file
+# cat $HOME/hugo/hugo_scripts//playlists/spotify/playlists_mood.md >> $about_file
 # echo "" >> $about_file
 # echo "# Gentuza"
 # echo "" >> $about_file
-# cat $HOME/hugo/scripts/playlists/spotify/playlists_people.md >> $about_file
+# cat $HOME/hugo/hugo_scripts//playlists/spotify/playlists_people.md >> $about_file
 # echo "" >> $about_file
 
 
@@ -182,7 +182,7 @@ if [[ -z $url_spotify ]]; then
     spotify="<!-- [![spotify](../links/svg/spotify.png (putify))]("$url_spotify") -->"
 elif [[ $url_spotify =~ "Error" ]]; then
     echo "error en el script de spotify en\
-        /home/pi/hugo/scripts/blog/vvmm/post/enlaces/spotify/spotify.py"
+        /home/pi/hugo/hugo_scripts//blog/vvmm/post/enlaces/spotify/spotify.py"
     exit 0
 else 
     spotify="[![spotify](../links/svg/spotify.png (putify))]("$url_spotify")"

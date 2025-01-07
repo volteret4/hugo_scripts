@@ -31,7 +31,6 @@ home_dir = os.environ["HOME"]
 # Definir las rutas
 cache_path = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "token.txt")
 token_script = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "sp_playlist.py")
-python3 $HOME/hugo/scripts/playlists/spotify/sp_playlist.py
 def renovar_token():
     """Ejecuta el script de renovación de token"""
     try:

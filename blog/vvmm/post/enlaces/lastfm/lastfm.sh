@@ -18,7 +18,7 @@
 
 ARTIST="${1}"
 ALBUM="${2}"
-LASTFM_APIKEY="$(cat $HOME/hugo/scripts/blog/vvmm/post/enlaces/lastfm/.env)"
+LASTFM_APIKEY="$(cat $HOME/hugo/hugo_scripts/blog/vvmm/post/enlaces/lastfm/.env)"
 
 # Verifica que los parámetros no estén vacíos
 if [ -z "$ARTIST" ] || [ -z "$ALBUM" ]; then

@@ -1,2 +1,9 @@
 .env_root
 **/*.env
+**/*.json
+**/*.txt
+playlists/spotify/token.txt
+playlists/spotify/token.txt_BAK
+playlists/spotify/spotify_token_user-follow-modify_user-follow-read.json
+playlists/spotify/token_crear.txt
+playlists/spotify/token.txt
