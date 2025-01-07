@@ -7,3 +7,5 @@ playlists/spotify/token.txt_BAK
 playlists/spotify/spotify_token_user-follow-modify_user-follow-read.json
 playlists/spotify/token_crear.txt
 playlists/spotify/token.txt
+playlists/youtube/client_secret.json
+playlists/spotify/token_private.txt
