@@ -1,20 +1,23 @@
-#!/usr/bin/env python
 
 import wikipediaapi
 import sys
 
 def create_wiki_instance():
-    """Crea y retorna una instancia de Wikipedia"""
+    """Crea y retorna una instancia de Wikipedia con un User-Agent válido"""
     return wikipediaapi.Wikipedia(
         language='en',
         extract_format=wikipediaapi.ExtractFormat.WIKI,
-        user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+        user_agent="MyWikipediaBot/1.0 (contact: myemail@example.com)"
     )
 
 def search_wikipedia(wiki_wiki, title):
     """Busca una página de Wikipedia y retorna el objeto página si existe"""
-    page = wiki_wiki.page(title)
-    return page if page.exists() else None
+    try:
+        page = wiki_wiki.page(title)
+        return page if page.exists() else None
+    except Exception as e:
+        print(f"Error al buscar '{title}': {e}")
+        return None
 
 def try_album_variants(wiki_wiki, artist, album):
     """Intenta diferentes variantes del título del álbum"""
@@ -71,8 +74,7 @@ def search_artist(wiki_wiki, artist):
         f"{artist} (artist)",
         f"{artist} (dj)",
         f"{artist} (producer)",
-        f"{artist} (singer)",
-        {artist}
+        f"{artist} (singer)"
     ]
 
     for variant in variants:

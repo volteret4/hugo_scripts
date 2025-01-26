@@ -15,9 +15,9 @@ load_dotenv()
 home_dir = os.environ["HOME"]
 
 # Definir las rutas
-cache_path = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "token.txt")
-covers_dir = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "covers")
-token_script = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "sp_playlist.py")
+cache_path = os.path.join(home_dir, "hugo", "hugo_scripts", "playlists", "spotify", "token.txt")
+covers_dir = os.path.join(home_dir, "hugo", "hugo_scripts", "playlists", "spotify", "covers")
+token_script = os.path.join(home_dir, "hugo", "hugo_scripts", "playlists", "spotify", "sp_playlist.py")
 
 # Crear el directorio de portadas si no existe
 Path(covers_dir).mkdir(parents=True, exist_ok=True)

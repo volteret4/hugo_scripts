@@ -21,23 +21,34 @@
 enlaces_dir="${HOME}/hugo/hugo_scripts/blog/vvmm/post/enlaces"
 post_dir="${HOME}/hugo/hugo_scripts/blog/vvmm/post"
 blog="${HOME}/hugo/web/vvmm"
-
-source "${HOME}/scripts/python_venv/bin/activate"
-
-# Definir colores
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-RESET='\033[0m'  # Restablece al color por defecto
-
 # Parametros
 artista="${1}"
 albuma="${2}"
 # eliminamos caracteres no alfanumericos.....que pena no poder poner una tilde
-artist="$(bash "$HOME/hugo/hugo_scripts//limpiar_var.sh" "${artista}")"
-album="$(bash $HOME/hugo/hugo_scripts//limpiar_var.sh ${albuma})"
+artist="$(bash "$HOME/hugo/hugo_scripts/limpiar_var.sh" "${artista}")"
+album="$(bash "$HOME"/hugo/hugo_scripts/limpiar_var.sh "${albuma}")"
+artista_guion="${artist} _"                                         # Aqui adjunta el guion bajo
+post_pre="${artista_guion}-${album}"
+post_guiones="$(echo "$post_pre" | sed 's/ /-/g' | sed 's/,//g')"
+post_file="${blog}/content/posts/${post_guiones}/index.md"
+
+
+if [[ -f $post_file ]];then
+    echo "Ya existe el post $post_file"
+    exit 0
+fi
+# shellcheck source=/dev/null
+source "${HOME}/scripts/python_venv/bin/activate"
+
+# Definir colores
+#RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
+#BLUE='\033[0;34m'
+#CYAN='\033[0;36m'
+RESET='\033[0m'  # Restablece al color por defecto
+
+
 
 # .env_root: COLORES!
 #source ${HOME}/scripts/.env_root
@@ -56,14 +67,14 @@ echo -e "${YELLOW}Actualizando listado de playlists y about_file.${RESET}"
 
 about_file="$HOME/hugo/web/vvmm/content/about.md"
 
-python3 $HOME/hugo/hugo_scripts//playlists/spotify/sp_playlist.py
-python3 $enlaces_dir/spotify/sp_playlist_md.py
+python3 "$HOME"/hugo/hugo_scripts/playlists/spotify/sp_playlist.py
+python3 "$enlaces_dir"/spotify/sp_playlist_md.py
 rm "${about_file}"
 cp "${about_file}.skel" "${about_file}"
-echo "" >> $about_file
-echo "_Actualizado el "$(date +%d-%m-%Y)"_" >> $about_file
-echo "" >> $about_file
-cat $HOME/hugo/hugo_scripts//playlists/spotify/playlists.md >> $about_file
+echo "" >> "$about_file"
+echo "_Actualizado el "$(date +%d-%m-%Y)"_" >> "$about_file"
+echo "" >> "$about_file"
+cat "$HOME"/hugo/hugo_scripts//playlists/spotify/playlists.md >> "$about_file"
 
 # echo "# Genero"
 # echo "" >> $about_file
@@ -89,36 +100,36 @@ echo -e "${GREEN}Ejecutando Scripts para:${RESET}"
 #allmusic="$(python3 ${enlaces_dir}/allmusic.py ${artist} ${album})"
 
 echo bandcamp
-url_bandcamp="$(python3 ${enlaces_dir}/bandcamp/bandcamp.py "$artist" "$album" | sed 's/\?from=.*//')"
+url_bandcamp="$(python3 "${enlaces_dir}"/bandcamp/bandcamp.py "$artist" "$album" | sed 's/\?from=.*//')"
 
 echo lastfm
-url_lastfm="$(bash ${enlaces_dir}/lastfm/lastfm.sh "$artist" "$album")"
+url_lastfm="$(bash "${enlaces_dir}"/lastfm/lastfm.sh "$artist" "$album")"
 
 
 echo musicbrainz
-url_musicbrainz="$(python3 ${enlaces_dir}/musicbrainz/musicbrainz.py "$artist" "$album")"
+url_musicbrainz="$(python3 "${enlaces_dir}"/musicbrainz/musicbrainz.py "$artist" "$album")"
 
 #echo rym
-#url_rym="$(python3 ${enlaces_dir}/rym/rym.py ${artist} ${album})"
+#url_rym="$(python3 "${enlaces_dir}"/rym/rym.py ${artist} ${album})"
 
 echo spotify
-url_spotify="$(python3 ${enlaces_dir}/spotify/spotify.py "$artist" "$album")"
+url_spotify="$(python3 "${enlaces_dir}"/spotify/spotify.py "$artist" "$album")"
 
 echo youtube
-url_youtube="$(python3 ${enlaces_dir}/youtube/youtube.py "$artist" "$album")"
+url_youtube="$(python3 "${enlaces_dir}"/youtube/youtube.py "$artist" "$album")"
 
 echo wikipedia
-url_wikipedia="$(python3 ${enlaces_dir}/wikipedia/wikipedia.py "$artist" "$album" | tr -d '\n' | tr -d '\r')"
+url_wikipedia="$(python3 "${enlaces_dir}"/wikipedia/wikipedia.py "$artist" "$album" | tr -d '\n' | tr -d '\r')"
 
 echo discogs
 if [[ -f ${blog}/releases.txt ]] ; then rm "${blog}"/releases.txt ; fi           # elimina los releases del último post.
 touch "${blog}"/releases.txt
-masterid="$(python3 ${enlaces_dir}/discogs/discogs.py "$artist" "$album")"                  # master id de discogs para obtener info.
+masterid="$(python3 "${enlaces_dir}"/discogs/discogs.py "$artist" "$album")"                  # master id de discogs para obtener info.
 
 echo -e "${GREEN}Comprobando si existe master en discogs.${RESET}"
 
 # lanzar script de bash para buscar releases si no hay masterid.
-if [ $masterid = 'bash_script' ]
+if [ "$masterid" = 'bash_script' ]
     then
         releaseid="$(python3 "${enlaces_dir}"/discogs/release_id.py "$album")"
         #url_discogs="$(echo "$temp_dg" | awk -F '_' '{print $2}')"
@@ -141,9 +152,9 @@ echo -e "${GREEN} Enlaces conseguidos:${RESET}"
 
 # bandcamp
 if [[ -z $url_bandcamp ]]; then 
-    bandcamp="<!-- [![bandcamp](../links/svg/bandcamp.png (bandcamp))]("$url_bandcamp") url vacia -->"
+    bandcamp="<!-- [![bandcamp](../links/svg/bandcamp.png (bandcamp))](${url_bandcamp}) url vacia -->"
 elif [[ $url_bandcamp =~ 'error' ]]; then 
-    bandcamp="<!-- [![bandcamp](../links/svg/bandcamp.png (bandcamp))]("$url_bandcamp") error busqueda -->"
+    bandcamp="<!-- [![bandcamp](../links/svg/bandcamp.png (bandcamp))](${url_bandcamp}) error busqueda -->"
 else 
     bandcamp="[![bandcamp](../links/svg/bandcamp.png (bandcamp))]("https://bandcamp.com/search?q=$artista%20$album")"
     echo bandcamp
@@ -151,9 +162,9 @@ fi
 
 # discogs
 if [[ -z $url_discogs ]]; then 
-    discogs="<!-- [![discogs](../links/svg/discogs.png (discogs))]("$url_discogs") -->"
+    discogs="<!-- [![discogs](../links/svg/discogs.png (discogs))](${url_discogs}) -->"
 else 
-    discogs="[![discogs](../links/svg/discogs.png (discogs))]("$url_discogs")"
+    discogs="[![discogs](../links/svg/discogs.png (discogs))](${url_discogs})"
     echo discogs
 fi
 
@@ -335,18 +346,6 @@ printf "\n%b%s%b\n" "$GREEN" "Descargando carátulas" "$RESET"
 post_folder="$(dirname $post_file)"
 cd $post_folder
 caratula="$(python3 "$post_dir"/portadas/caratula-spotify.py "$artist" "$album")"
-
-
-# Descarga carátula de musicbrainz.
-#caratula="$post_folder/image.jpeg" 
-# if [[ $caratula != Error ]]; then
-#     echo "caratula descargada desde spotify"
-# else
-#     bash $post_dir/portadas/portada_mb.sh "$artist" "$album" "$url_musicbrainz"
-#     mv $HOME/hugo/web/vvmm/links/portada/image.jpeg $post_folder/image.jpeg
-#     echo "caratula descargada desde music brainz"
-# fi
-
 
 
 
