@@ -5,11 +5,13 @@ import os
 import markdown
 import sys
 from datetime import datetime, timedelta
+import argparse
+import calendar
 
 load_dotenv()
 
 # Tu API key de Last.fm
-filename="/home/pi/hugo/web/rym/lastfm_monthly_stats.md"
+#filename="/home/pi/hugo/web/rym/lastfm_monthly_stats.md"
 API_KEY = os.getenv('LASTFM_API_KEY')
 BASE_URL = "http://ws.audioscrobbler.com/2.0/"
 fecha_actual = datetime.now()
@@ -31,20 +33,34 @@ USERNAMES = [
     "Rocky_stereo",
     "sdecandelario"
 ]
+
 class LastFMStats:
-    def __init__(self, api_key, usernames):
-        # Calculate previous month's start and end timestamps
-        now = datetime.now()
-        first_day_of_current_month = now.replace(day=1)
-        last_day_of_previous_month = first_day_of_current_month - timedelta(days=1)
+    def __init__(self, api_key, usernames, year=None, month=None):
+    # Si no se especifica año y mes, usar el mes anterior
+        if year is None or month is None:
+            now = datetime.now()
+            if month is None:
+                # Si estamos en enero, ir al diciembre del año anterior
+                if now.month == 1:
+                    month = 12
+                    year = now.year - 1
+                else:
+                    month = now.month - 1
+                    year = now.year
         
-        self.start_timestamp = int(last_day_of_previous_month.replace(day=1, hour=0, minute=0, second=0).timestamp())
-        self.end_timestamp = int(last_day_of_previous_month.replace(hour=23, minute=59, second=59).timestamp())
+        # Obtener el primer y último día del mes especificado
+        first_day = datetime(year, month, 1)
+        _, last_day_of_month = calendar.monthrange(year, month)
+        last_day = datetime(year, month, last_day_of_month, 23, 59, 59)
+        
+        self.start_timestamp = int(first_day.timestamp())
+        self.end_timestamp = int(last_day.timestamp())
+        self.month_name = first_day.strftime("%B %Y")
         
         self.api_key = api_key
         self.usernames = usernames
         self.base_url = "http://ws.audioscrobbler.com/2.0/"
-
+    
     def _make_request(self, method, username, params=None):
         default_params = {
             'method': method,
@@ -162,16 +178,16 @@ class LastFMStats:
         
         self.usernames = list(valid_users_data.keys())
         
-        md_content = "# Estadísticas semanales en Last.fm\n\n"
+        md_content = f"# Estadísticas de Last.fm - {self.month_name}\n\n"
         
         # Coincidencias
         md_content += "## Coincidencias entre Usuarios\n\n"
         
         # Canciones compartidas
-        md_content += "*Canciones*\n"
+        md_content += "### Canciones\n"
         md_content += "| Canción | Artista | Álbum | Usuarios |\n"
         md_content += "|---------|---------|-------|----------|\n"
-        
+        shared_tracks = {}
         all_tracks = set()
         for user_data in valid_users_data.values():
             all_tracks.update(user_data['tracks'].keys())
@@ -184,14 +200,31 @@ class LastFMStats:
             
             if len(track_users) > 1:
                 track_name, artist_name, album_name = track
-                user_plays = [f"{user} ({plays})" for user, plays in track_users.items()]
-                md_content += f"| {track_name} | {artist_name} | {album_name} | {', '.join(user_plays)} |\n"
+                shared_tracks[track] = {
+                'track_name': track_name,
+                'artist_name': artist_name,
+                'album_name': album_name,
+                'users': track_users
+            }
+                # Ordenar tracks por número de usuarios (de mayor a menor)
+        sorted_tracks = sorted(
+            shared_tracks.values(), 
+            key=lambda x: len(x['users']), 
+            reverse=True
+        )
+        for track_info in sorted_tracks:
+            user_plays = [f"{user} ({plays})" for user, plays in track_info['users'].items()]
+            md_content += f"| {track_info['track_name']} | {track_info['artist_name']} | {track_info['album_name']} | {', '.join(user_plays)} |\n"
+        
+                # user_plays = [f"{user} ({plays})" for user, plays in track_users.items()]
+                # md_content += f"| {track_name} | {artist_name} | {album_name} | {', '.join(user_plays)} |\n"
         
         # Álbumes compartidos
-        md_content += "\n*Álbumes*\n"
+        md_content += "\n### Álbumes\n"
         md_content += "| Álbum | Artista | Usuarios |\n"
         md_content += "|-------|---------|----------|\n"
-        
+        shared_albums = {}
+
         all_albums = set()
         for user_data in valid_users_data.values():
             all_albums.update(user_data['albums'].keys())
@@ -204,14 +237,31 @@ class LastFMStats:
             
             if len(album_users) > 1:
                 artist = next(iter(set(artist for user_data in valid_users_data.values() for artist in user_data['albums'][album].keys())))
-                user_plays = [f"{user} ({plays})" for user, plays in album_users.items()]
-                md_content += f"| {album} | {artist} | {', '.join(user_plays)} |\n"
+                shared_albums[album] = {
+                'album': album,
+                'artist': artist,
+                'users': album_users
+            }
+
+            # Ordenar álbumes por número de usuarios (de mayor a menor)
+        sorted_albums = sorted(
+            shared_albums.values(), 
+            key=lambda x: len(x['users']), 
+            reverse=True
+        )
+        
+        for album_info in sorted_albums:
+            user_plays = [f"{user} ({plays})" for user, plays in album_info['users'].items()]
+            md_content += f"| {album_info['album']} | {album_info['artist']} | {', '.join(user_plays)} |\n"
+                # user_plays = [f"{user} ({plays})" for user, plays in album_users.items()]
+                # md_content += f"| {album} | {artist} | {', '.join(user_plays)} |\n"
         
         # Artistas compartidos
-        md_content += "\n*Artistas*\n"
+        md_content += "\n### Artistas\n"
         md_content += "| Artista | Usuarios |\n"
         md_content += "|---------|----------|\n"
-        
+        shared_artists = {}
+
         all_artists = set()
         for user_data in valid_users_data.values():
             all_artists.update(user_data['artists'].keys())
@@ -223,8 +273,20 @@ class LastFMStats:
                     artist_users[user] = user_data['artists'][artist]
             
             if len(artist_users) > 1:
-                user_plays = [f"{user} ({plays})" for user, plays in artist_users.items()]
-                md_content += f"| {artist} | {', '.join(user_plays)} |\n"
+                shared_artists[artist] = artist_users
+        # Ordenar artistas por número de usuarios (de mayor a menor)
+        sorted_artists = sorted(
+            shared_artists.items(), 
+            key=lambda x: len(x[1]), 
+            reverse=True
+        )
+        
+        for artist, artist_users in sorted_artists:
+            user_plays = [f"{user} ({plays})" for user, plays in artist_users.items()]
+            md_content += f"| {artist} | {', '.join(user_plays)} |\n"
+    
+                # user_plays = [f"{user} ({plays})" for user, plays in artist_users.items()]
+                # md_content += f"| {artist} | {', '.join(user_plays)} |\n"
         
         # Top 10 por usuario
         for user, data in valid_users_data.items():
@@ -252,8 +314,28 @@ class LastFMStats:
 
 # Ejemplo de uso
 def main():
-    lastfm_stats = LastFMStats(API_KEY, USERNAMES)
-    lastfm_stats.save_markdown(filename)
+
+    # Buscar los valores de --year y --month en los argumentos
+    args = sys.argv
+    year = None
+    month = None
+
+    # Recorrer los argumentos y extraer los valores
+    for i in range(len(args)):
+        if args[i] == "--year" and i + 1 < len(args):
+            year = args[i + 1]
+        elif args[i] == "--month" and i + 1 < len(args):
+            month = args[i + 1]
+
+    # Verificar que ambos valores fueron encontrados
+    if year and month:
+        fecha_formateada = f"{month}-{year}"
+        print(f"Fecha formateada: {fecha_formateada}")
+        # Convertir year y month a enteros antes de pasarlos
+        year_int = int(year)
+        month_int = int(month)
+        lastfm_stats = LastFMStats(API_KEY, USERNAMES, year=year_int, month=month_int)
+        lastfm_stats.save_markdown(fecha_formateada)
 
 if __name__ == "__main__":
     main()

@@ -24,6 +24,29 @@ blog="${HOME}/hugo/web/vvmm"
 # Parametros
 artista="${1}"
 albuma="${2}"
+shift
+
+# Inicializar variables para tags
+tags=()
+
+# Variable para masterid (si se pasa como argumento)
+masterid=""
+
+# Procesar los argumentos restantes
+for arg in "$@"; do
+  if [[ "$arg" =~ ^masterid= ]]; then
+    masterid="${arg#masterid=}"
+  else
+    tags+=("$arg")  # Los demás se almacenan como tags
+  fi
+done
+# Generos o Estilos
+# tagA="${3}"
+# tagB="${4}"
+# tagC="${5}"
+# tagD="${6}"
+# tagE="${7}"
+
 # eliminamos caracteres no alfanumericos.....que pena no poder poner una tilde
 artist="$(bash "$HOME/hugo/hugo_scripts/limpiar_var.sh" "${artista}")"
 album="$(bash "$HOME"/hugo/hugo_scripts/limpiar_var.sh "${albuma}")"
@@ -40,6 +63,9 @@ fi
 # shellcheck source=/dev/null
 source "${HOME}/scripts/python_venv/bin/activate"
 
+# .env_root: COLORES!
+#source ${HOME}/scripts/.env_root
+
 # Definir colores
 #RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -50,15 +76,6 @@ RESET='\033[0m'  # Restablece al color por defecto
 
 
 
-# .env_root: COLORES!
-#source ${HOME}/scripts/.env_root
-
-# Generos o Estilos
-tagA="${3}"
-tagB="${4}"
-tagC="${5}"
-tagD="${6}"
-tagE="${7}"
 
 
     # Actualizar playlists de spotify.
@@ -354,7 +371,7 @@ caratula="$(python3 "$post_dir"/portadas/caratula-spotify.py "$artist" "$album")
 if [[ $caratula =~ Error ]]; then
     python3  "$post_dir"/portadas/caratula-alternativa.py "$artist" "$album" "$post_folder"
     #bash $post_dir/portadas/portada_mb.sh "$artist" "$album" "$url_musicbrainz"
-    #mv $HOME/hugo/web/vvmm/links/portada/image.jpeg $post_folder/image.jpeg
+    mv $HOME/hugo/web/vvmm/static/portadas/$artist-_-$album.jpg $post_folder/image.jpeg
     echo "caratula descargada desde music brainz o discogs"
 else
     echo "caratula descargada desde spotify"
@@ -368,25 +385,25 @@ fi
 
 # Aniade las TAGS si existieran.
 printf "\n%b%s%b\n" "$GREEN" "Añade los tags..." "$RESET"
-if [[ -n $tagA ]]
+if [[ -n ${tags[0]} ]]
 then
-	sed -i 's/\#- tagA/- '"$tagA"'/' "${post_file}"
+	sed -i 's/\#- tagA/- '"${tags[0]}"'/' "${post_file}"
 fi
-if [[ -n $tagB ]]
+if [[ -n ${tags[1]} ]]
     then
-        sed -i 's/\#- tagB/- '"$tagB"'/' "${post_file}"
+        sed -i 's/\#- tagB/- '"${tags[1]}"'/' "${post_file}"
 fi
-if [[ -n $tagC ]]
+if [[ -n ${tags[2]} ]]
     then
-        sed -i 's/\#- tagC/- '"$tagC"'/' "${post_file}"
+        sed -i 's/\#- tagC/- '"${tags[2]}"'/' "${post_file}"
 fi
-if [[ -n $tagD ]]
+if [[ -n ${tags[3]} ]]
     then
-        sed -i 's/\#- tagD/- '"$tagD"'/' "${post_file}"
+        sed -i 's/\#- tagD/- '"${tags[3]}"'/' "${post_file}"
 fi
-if [[ -n $tagE ]]
+if [[ -n ${tags[4]} ]]
     then
-        sed -i 's/\tagE/- '"$tagE"'/' "${post_file}"
+        sed -i 's/\tagE/- '"${tags[4]}"'/' "${post_file}"
 fi
 
 if [[ -f "$HOME"/pollo.txt ]]; then

@@ -56,63 +56,51 @@ def get_master_release_id(artist_name, album_name):
 
 
 def get_artist_id(artist_name):
-    # Construye la URL para buscar al artista por nombre
     search_url = f"{BASE_URL}/database/search?q={artist_name}&type=artist&token={TOKEN}"
-
     try:
-        # Realiza la solicitud GET a la API de Discogs
         response = requests.get(search_url)
-        response.raise_for_status()  # Lanza una excepción si hay un error en la solicitud
-
-        # Analiza la respuesta JSON
+        response.raise_for_status()
         data = response.json()
-
-        # Verifica si hay resultados
         if data['pagination']['items'] > 0:
-            # Devuelve el ID del primer resultado (asumiendo que es el artista correcto)
             return data['results'][0]['id']
         else:
-            print(f"No se encontró ningún artista con el nombre '{artist_name}'.")
-            return None
-
+            return None, f"No se encontró ningún artista con el nombre '{artist_name}'."
     except requests.exceptions.RequestException as e:
-        print("Error al hacer la solicitud a la API de Discogs:", e)
-        return None
+        return None, f"Error al hacer la solicitud a la API de Discogs: {e}"
 
 def save_artist_releases(artist_name, output_path):
-    artist_id = get_artist_id(artist_name)
-    #print(artist_id)
-    if artist_id:
-        page = 1
-        releases = []
-        while True:
-            releases_url = f"{BASE_URL}/artists/{artist_id}/releases?token={TOKEN}&page={page}&per_page=100"
-            #print(releases_url)
-            try:
-                response = requests.get(releases_url)
-                response.raise_for_status()
-                data = response.json()
-                if 'releases' in data:
-                    releases.extend(data['releases'])
-                    if len(data['releases']) < 98:  # If less than 100 releases, this is the last page
-                        break
-                    page += 1
-                else:
+    artist_id, error_message = get_artist_id(artist_name)
+    if artist_id is None:
+        print(error_message)
+        return
+    
+    page = 1
+    releases = []
+    while True:
+        releases_url = f"{BASE_URL}/artists/{artist_id}/releases?token={TOKEN}&page={page}&per_page=100"
+        try:
+            response = requests.get(releases_url)
+            response.raise_for_status()
+            data = response.json()
+            if 'releases' in data:
+                releases.extend(data['releases'])
+                if len(data['releases']) < 99:  # If less than 100 releases, this is the last page
                     break
-            except requests.exceptions.RequestException as e:
-                print("Error al hacer la solicitud a la API de Discogs:", e)
+                page += 1
+            else:
                 break
+        except requests.exceptions.RequestException as e:
+            print("Error al hacer la solicitud a la API de Discogs:", e)
+            break
 
-        # Guarda los releases del artista en el archivo especificado
-        with open(output_path, "w") as file:
-            file.write("Listado de releases del artista:\n")
-            for release in releases:
-                title = release.get('title', 'Desconocido')
-                year = release.get('year', 'Desconocido')
-                resource_url = release.get('resource_url', 'Desconocido')
-                file.write(f"{title} - {year} - {resource_url}\n")
-    else:
-        print("No se pudo obtener el ID del artista.")
+    # Guarda los releases del artista en el archivo especificado
+    with open(output_path, "w") as file:
+        file.write("Listado de releases del artista:\n")
+        for release in releases:
+            title = release.get('title', 'Desconocido')
+            year = release.get('year', 'Desconocido')
+            resource_url = release.get('resource_url', 'Desconocido')
+            file.write(f"{title} - {year} - {resource_url}\n")
 
 
 if __name__ == "__main__":

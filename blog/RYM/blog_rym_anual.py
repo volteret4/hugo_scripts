@@ -188,9 +188,10 @@ class LastFMStats:
         md_content += "## Coincidencias entre Usuarios\n\n"
         
         # Canciones compartidas
-        md_content += "*Canciones*\n"
+        md_content += "### Canciones\n"
         md_content += "| Canción | Artista | Álbum | Usuarios |\n"
         md_content += "|---------|---------|-------|----------|\n"
+        shared_tracks = {}
         
         all_tracks = set()
         for user_data in valid_users_data.values():
@@ -204,14 +205,29 @@ class LastFMStats:
             
             if len(track_users) > 1:
                 track_name, artist_name, album_name = track
-                user_plays = [f"{user} ({plays})" for user, plays in track_users.items()]
-                md_content += f"| {track_name} | {artist_name} | {album_name} | {', '.join(user_plays)} |\n"
+                shared_tracks[track] = {
+                'track_name': track_name,
+                'artist_name': artist_name,
+                'album_name': album_name,
+                'users': track_users
+            }
+                # Ordenar tracks por número de usuarios (de mayor a menor)
+        sorted_tracks = sorted(
+            shared_tracks.values(), 
+            key=lambda x: len(x['users']), 
+            reverse=True
+        )
+        for track_info in sorted_tracks:
+            user_plays = [f"{user} ({plays})" for user, plays in track_info['users'].items()]
+            md_content += f"| {track_info['track_name']} | {track_info['artist_name']} | {track_info['album_name']} | {', '.join(user_plays)} |\n"
+                # user_plays = [f"{user} ({plays})" for user, plays in track_users.items()]
+                # md_content += f"| {track_name} | {artist_name} | {album_name} | {', '.join(user_plays)} |\n"
         
         # Álbumes compartidos
-        md_content += "\n*Álbumes*\n"
+        md_content += "\n### Álbumes\n"
         md_content += "| Álbum | Artista | Usuarios |\n"
         md_content += "|-------|---------|----------|\n"
-        
+        shared_albums = {}
         all_albums = set()
         for user_data in valid_users_data.values():
             all_albums.update(user_data['albums'].keys())
@@ -224,13 +240,31 @@ class LastFMStats:
             
             if len(album_users) > 1:
                 artist = next(iter(set(artist for user_data in valid_users_data.values() for artist in user_data['albums'][album].keys())))
-                user_plays = [f"{user} ({plays})" for user, plays in album_users.items()]
-                md_content += f"| {album} | {artist} | {', '.join(user_plays)} |\n"
+                shared_albums[album] = {
+                'album': album,
+                'artist': artist,
+                'users': album_users
+            }
+
+            # Ordenar álbumes por número de usuarios (de mayor a menor)
+        sorted_albums = sorted(
+            shared_albums.values(), 
+            key=lambda x: len(x['users']), 
+            reverse=True
+        )
+        
+        for album_info in sorted_albums:
+            user_plays = [f"{user} ({plays})" for user, plays in album_info['users'].items()]
+            md_content += f"| {album_info['album']} | {album_info['artist']} | {', '.join(user_plays)} |\n"
+
+                # user_plays = [f"{user} ({plays})" for user, plays in album_users.items()]
+                # md_content += f"| {album} | {artist} | {', '.join(user_plays)} |\n"
         
         # Artistas compartidos
-        md_content += "\n*Artistas*\n"
+        md_content += "\n### Artistas\n"
         md_content += "| Artista | Usuarios |\n"
         md_content += "|---------|----------|\n"
+        shared_tracks = {}
         
         all_artists = set()
         for user_data in valid_users_data.values():
@@ -243,8 +277,20 @@ class LastFMStats:
                     artist_users[user] = user_data['artists'][artist]
             
             if len(artist_users) > 1:
-                user_plays = [f"{user} ({plays})" for user, plays in artist_users.items()]
-                md_content += f"| {artist} | {', '.join(user_plays)} |\n"
+                shared_artists[artist] = artist_users
+        # Ordenar artistas por número de usuarios (de mayor a menor)
+        sorted_artists = sorted(
+            shared_artists.items(), 
+            key=lambda x: len(x[1]), 
+            reverse=True
+        )
+        
+        for artist, artist_users in sorted_artists:
+            user_plays = [f"{user} ({plays})" for user, plays in artist_users.items()]
+            md_content += f"| {artist} | {', '.join(user_plays)} |\n"
+    
+                # user_plays = [f"{user} ({plays})" for user, plays in artist_users.items()]
+                # md_content += f"| {artist} | {', '.join(user_plays)} |\n"
         
         # Top 10 por usuario
         for user, data in valid_users_data.items():

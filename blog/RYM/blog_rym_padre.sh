@@ -111,4 +111,71 @@ else
     send_telegram_message "❌ Weekly script failed. Stopping execution." "Markdown"
 fi
 
+
+    # Estadisticas graficas post semanal
+
+if $weekly_script_ran; then
+    fecha=$(date +"%d-%m-%y")
+    # crear carpeta para las graficas
+    mkdir -p "/home/pi/hugo/web/rym/static/graficos/$fecha/{canciones,artistas,albumes}"
+
+    # crear diferentes post estadistica
+    hug new --kind post_bundle estadisticas/$fecha/canciones
+    hug new --kind post_bundle estadisticas/$fecha/artistas
+    hug new --kind post_bundle estadisticas/$fecha/albumes
+
+    # Generar estadisticas canciones
+    python3 "$HOME/hugo/hugo_scripts/blog/RYM/graficos_canciones.py"  "/home/pi/hugo/web/rym/content/semanal/$fecha.md" "/home/pi/hugo/web/rym/static/graficos/semanal/$fecha/canciones" "/home/pi/hugo/web/rym/content/estadisticas/semanal/$fecha/canciones/default.md"
+    # Generar estadisticas albums
+    python3 "$HOME/hugo/hugo_scripts/blog/RYM/graficos_albumes.py"  "/home/pi/hugo/web/rym/content/semanal/$fecha.md" "/home/pi/hugo/web/rym/static/graficos/semanal/$fecha/albumes" "/home/pi/hugo/web/rym/content/estadisticas/semanal/$fecha/albumes/default.md"
+    # Generar estadisticas artistas
+    python3 "$HOME/hugo/hugo_scripts/blog/RYM/graficos_artistas.py"  "/home/pi/hugo/web/rym/content/semanal/$fecha.md" "/home/pi/hugo/web/rym/static/graficos/semanal/$fecha/artistas" "/home/pi/hugo/web/rym/content/estadisticas/semanal/$fecha/artistas/default.md"
+fi
+
+
+# Estadisticas graficas post mensual
+
+if $monthly_script_ran; then
+    fecha=$(date +"%m-%y")
+    # crear carpeta para las graficas
+    mkdir -p "/home/pi/hugo/web/rym/static/graficos/mensual/$fecha/{canciones,artistas,albumes}"
+
+    # crear diferentes post estadistica
+    hug new --kind post_bundle estadisticas/mensual/"${fecha}"/canciones
+    hug new --kind post_bundle estadisticas/mensual/"${fecha}"/artistas
+    hug new --kind post_bundle estadisticas/mensual/"${fecha}"/albumes
+
+    # Generar estadisticas canciones                                    Archivo a leer para extraer datos                   carpeta donde se guardan los graficos                                 Archivo de estadisticas markdown
+    python3 "$HOME/hugo/hugo_scripts/blog/RYM/graficos_canciones.py"  "/home/pi/hugo/web/rym/content/mensual/$fecha.md" "/home/pi/hugo/web/rym/static/graficos/mensual/$fecha/canciones" "/home/pi/hugo/web/rym/content/estadisticas/mensual/$fecha/canciones/default.md"
+    # Generar estadisticas albums
+    python3 "$HOME/hugo/hugo_scripts/blog/RYM/graficos_albumes.py"  "/home/pi/hugo/web/rym/content/mensual/$fecha.md" "/home/pi/hugo/web/rym/static/graficos/mensual/$fecha/albumes" "/home/pi/hugo/web/rym/content/estadisticas/mensual/$fecha/albumes/default.md"
+    # Generar estadisticas artistas
+    python3 "$HOME/hugo/hugo_scripts/blog/RYM/graficos_artistas.py"  "/home/pi/hugo/web/rym/content/mensual/$fecha.md" "/home/pi/hugo/web/rym/static/graficos/mensual/$fecha/artistas" "/home/pi/hugo/web/rym/content/estadisticas/mensual/$fecha/artistas/default.md"
+fi
+
+
+# Estadisticas graficas post anual
+
+if $yearly_script_ran; then
+    fecha=$(date +"+%y")
+    # crear carpeta para las graficas
+    mkdir -p "/home/pi/hugo/web/rym/static/graficos/anuañ/$fecha/{canciones,artistas,albumes}"
+
+    # crear diferentes post estadistica
+    hug new --kind post_bundle estadisticas/anual/"${fecha}"/canciones
+    hug new --kind post_bundle estadisticas/anual/"${fecha}"/artistas
+    hug new --kind post_bundle estadisticas/anual/"${fecha}"/albumes
+
+    # Generar estadisticas canciones                                    Archivo a leer para extraer datos                   carpeta donde se guardan los graficos                                 Archivo de estadisticas markdown
+    python3 "$HOME/hugo/hugo_scripts/blog/RYM/graficos_canciones.py"  "/home/pi/hugo/web/rym/content/anual/$fecha.md" "/home/pi/hugo/web/rym/static/graficos/anual/$fecha/canciones" "/home/pi/hugo/web/rym/content/estadisticas/anual/$fecha/canciones/default.md"
+    # Generar estadisticas albums
+    python3 "$HOME/hugo/hugo_scripts/blog/RYM/graficos_albumes.py"  "/home/pi/hugo/web/rym/content/anual/$fecha.md" "/home/pi/hugo/web/rym/static/graficos/anual/$fecha/albumes" "/home/pi/hugo/web/rym/content/estadisticas/anual/$fecha/albumes/default.md"
+    # Generar estadisticas artistas
+    python3 "$HOME/hugo/hugo_scripts/blog/RYM/graficos_artistas.py"  "/home/pi/hugo/web/rym/content/anual/$fecha.md" "/home/pi/hugo/web/rym/static/graficos/anual/$fecha/artistas" "/home/pi/hugo/web/rym/content/estadisticas/anual/$fecha/artistas/default.md"
+fi
+
+
+
+    # Subir a github pages.
+
 cd "$blog_dir" || exit 0 ; git add . ; git commit -m "" ; git push

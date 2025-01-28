@@ -16,11 +16,11 @@ home_dir = os.environ["HOME"]
 
 # Definir las rutas
 cache_path = os.path.join(home_dir, "hugo", "hugo_scripts", "playlists", "spotify", "token.txt")
-covers_dir = os.path.join(home_dir, "hugo", "hugo_scripts", "playlists", "spotify", "covers")
+#covers_dir = os.path.join(home_dir, "hugo", "hugo_scripts", "playlists", "spotify", "covers")
 token_script = os.path.join(home_dir, "hugo", "hugo_scripts", "playlists", "spotify", "sp_playlist.py")
 
 # Crear el directorio de portadas si no existe
-Path(covers_dir).mkdir(parents=True, exist_ok=True)
+#Path(covers_dir).mkdir(parents=True, exist_ok=True)
 
 def renovar_token():
     """Ejecuta el script de renovación de token"""
@@ -108,7 +108,7 @@ def descargar_portada(url, artista, album):
     nombre_archivo = f"{artista}-_-{album}".replace(' ', '-')
     nombre_archivo = "".join(c for c in nombre_archivo if c.isalnum() or c in ('_', '-')).rstrip()
     #ruta_archivo = os.path.join(covers_dir, f"{nombre_archivo}.jpg")
-    ruta_archivo = os.path.join(home_dir, "hugo", "web", "vvmm", "content", "posts",  nombre_archivo, "image.jpeg") 
+    ruta_archivo = os.path.join(home_dir, "hugo", "web", "vvmm", "static", "portadas", f"{nombre_archivo}.jpg") 
 
     response = requests.get(url)
     if response.status_code == 200:
