@@ -20,6 +20,8 @@ import matplotlib.pyplot as plt
 import sys
 import os
 import numpy as np
+from procesar_visualizaciones import procesar_visualizaciones
+
 
 
 # 1. Leer el archivo Markdown
@@ -104,60 +106,222 @@ def recortar_texto(texto, max_chars=30):
     """Recorta el texto si supera max_chars caracteres."""
     return texto[:max_chars] + "…" if len(texto) > max_chars else texto
 
+# def plot_distribución_escuchas_albumes(df, carpeta, top_n=20):
+#     """
+#     Crea un gráfico de barras apiladas mostrando la distribución de escuchas por usuario,
+#     donde cada segmento representa un álbum diferente.
 
+#     Parameters:
+#         df: DataFrame con datos de álbumes y escuchas
+#         carpeta: Ruta de la carpeta para guardar los gráficos
+#         top_n: Número de álbumes a mostrar (por defecto 20)
+#     """
+#     configurar_graficos()
+    
+#     # Crear un DataFrame con las escuchas por usuario y álbum
+#     escuchas_por_usuario = {}
+#     for idx, row in df.iterrows():
+#         for user, count in row['Usuarios']:
+#             if user not in escuchas_por_usuario:
+#                 escuchas_por_usuario[user] = []
+#             escuchas_por_usuario[user].append({
+#                 'album': f"{row['Álbum']} - {row['Artista']}", 
+#                 'escuchas': count
+#             })
+    
+#     # Ordenar usuarios por total de escuchas
+#     totales_por_usuario = {user: sum(item['escuchas'] for item in datos) 
+#                           for user, datos in escuchas_por_usuario.items()}
+#     usuarios_ordenados = sorted(totales_por_usuario.keys(), 
+#                               key=lambda x: totales_por_usuario[x], 
+#                               reverse=True)
+    
+#     # Filtrar los top_n álbumes más escuchados
+#     albumes_ordenados = df.groupby('Álbum')['Usuarios'].apply(lambda usuarios: sum([escuchas for _, escuchas in usuarios])).sort_values(ascending=False).head(top_n).index
+    
+#     # Crear el gráfico
+#     plt.figure(figsize=(12, 8))
+#     left = np.zeros(len(usuarios_ordenados))
+    
+#     # Usar un color diferente para cada álbum
+#     todos_albumes = albumes_ordenados
+#     colores = plt.cm.viridis(np.linspace(0, 1, len(todos_albumes)))
+#     color_map = dict(zip(todos_albumes, colores))
+    
+#     # Crear las barras apiladas
+#     for album in todos_albumes:
+#         datos = []
+#         for user in usuarios_ordenados:
+#             total = sum(item['escuchas'] for item in escuchas_por_usuario[user] 
+#                        if item['album'].startswith(album))
+#             datos.append(total)
+        
+#         plt.barh(usuarios_ordenados, datos, left=left, 
+#                 label=recortar_texto(album, 30), 
+#                 color=color_map[album])
+#         left += datos
+    
+#     plt.xlabel('Número de escuchas')
+#     plt.ylabel('Usuario')
+#     plt.title(f'Distribución de escuchas por usuario y álbum (Top {top_n})')
+#     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', 
+#               title='Álbumes')
+#     plt.tight_layout()
+#     guardar_grafico("distribucion_escuchas_albumes.png", carpeta)
+#     plt.close()
+
+def plot_artistas(albums_df, carpeta, top_n=20):
+    """
+    Crea un gráfico de barras horizontales mostrando los artistas más escuchados,
+    sumando las escuchas de todos sus álbumes.
+    
+    Parameters:
+        albums_df: DataFrame con datos de álbumes
+        carpeta: Ruta de la carpeta de salida
+        top_n: Número de artistas top a mostrar (default 20)
+    """
+    configurar_graficos()
+    
+    # Crear un DataFrame con las escuchas por artista
+    artistas_data = {}
+    
+    # Procesar cada álbum
+    for _, row in albums_df.iterrows():
+        artista = row['Artista']
+        if artista not in artistas_data:
+            artistas_data[artista] = {'total': 0, 'usuarios': {}}
+            
+        # Procesar usuarios para este álbum
+        for user, count in row['Usuarios']:
+            if user not in artistas_data[artista]['usuarios']:
+                artistas_data[artista]['usuarios'][user] = 0
+            artistas_data[artista]['usuarios'][user] += count
+            artistas_data[artista]['total'] += count
+    
+    # Convertir a DataFrame para facilitar el procesamiento
+    artistas_list = []
+    for artista, data in artistas_data.items():
+        artistas_list.append({
+            'Artista': artista,
+            'Total': data['total'],
+            'Usuarios': [(user, count) for user, count in data['usuarios'].items()]
+        })
+    
+    artistas_df = pd.DataFrame(artistas_list)
+    # Ordenar por total y seleccionar top_n
+    artistas_df = artistas_df.sort_values('Total', ascending=False).head(top_n)
+    artistas_df = artistas_df.sort_values('Total', ascending=True)  # Reordenar para la visualización
+    
+    # Crear el gráfico
+    plt.figure(figsize=(12, 12))
+    
+    # Obtener todos los usuarios únicos
+    todos_usuarios = set()
+    for usuarios in artistas_df['Usuarios']:
+        todos_usuarios.update(user for user, _ in usuarios)
+    todos_usuarios = list(todos_usuarios)
+    
+    # Preparar datos para las barras apiladas
+    left = np.zeros(len(artistas_df))
+    colores = plt.cm.Paired(np.linspace(0, 1, len(todos_usuarios)))
+    
+    # Crear las barras para cada usuario
+    for i, usuario in enumerate(todos_usuarios):
+        valores = []
+        for usuarios in artistas_df['Usuarios']:
+            usuarios_dict = dict(usuarios)
+            valores.append(usuarios_dict.get(usuario, 0))
+        
+        plt.barh(range(len(artistas_df)), valores, 
+                left=left, label=usuario, color=colores[i])
+        left += valores
+    
+    # Configurar el gráfico
+    plt.yticks(range(len(artistas_df)), [recortar_texto(artista, 30) for artista in artistas_df['Artista']])
+    plt.xlabel("Número de escuchas")
+    plt.title(f"Top {top_n} Artistas más compartidos")
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', title="Usuarios")
+    
+    plt.tight_layout()
+    guardar_grafico("artistas_bar.png", carpeta)
+    plt.close()
 
 
 # 5. Gráfico de barras de canciones
-def plot_canciones(albums_df, carpeta):
+def plot_canciones(albums_df, carpeta, top_n=20):
+    """
+    Creates two bar charts:
+    1. Top N albums by total listens with stacked bars per user
+    2. Horizontal bar chart showing distribution of listens by user for top N albums
+    
+    Parameters:
+        albums_df: DataFrame with album data
+        carpeta: Output folder path
+        top_n: Number of top albums to show (default 20)
+    """
     configurar_graficos()
     
-    # Crear una columna que combine álbum y artista
+    # Calculate total listens and sort
+    albums_df = albums_df.copy()
+    albums_df["Total escuchas"] = albums_df["Usuarios"].apply(lambda usuarios: sum([escuchas for _, escuchas in usuarios]))
+    albums_df = albums_df.sort_values("Total escuchas", ascending=False).head(top_n)
+    
+    # Create a column combining album and artist
     albums_df["Álbum_Artista"] = albums_df.apply(
         lambda x: f"{recortar_texto(x['Álbum'], 25)} - {recortar_texto(x['Artista'], 20)}", 
         axis=1
     )
     
-    # Primer gráfico: barras horizontales del total de escuchas
-    plt.figure(figsize=(12, 12))  # Aumentado el ancho para acomodar los nombres más largos
-    plt.barh(albums_df["Álbum_Artista"], albums_df["Total escuchas"], color="#cba6f7")
-    plt.xlabel("Número total de escuchas")
-    plt.ylabel("Álbum - Artista")
-    plt.title("Álbumes más compartidos")
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=10)
-    plt.gca().invert_yaxis()
-    plt.tight_layout()
-    guardar_grafico("albums_bar.png", carpeta)
-    plt.close()
+    # First graph: stacked bar chart by user
+    plt.figure(figsize=(12, 10))
     
-    # Segundo gráfico: barras apiladas por usuario
-    plt.figure(figsize=(14, len(albums_df) * 0.5))  # Aumentado el ancho
-    bottom = np.zeros(len(albums_df))
-    
+    # Get unique users and create color map
     todos_usuarios = set()
     for usuarios in albums_df["Usuarios"]:
         todos_usuarios.update(user for user, _ in usuarios)
     todos_usuarios = list(todos_usuarios)
     
+    # Prepare data for stacked bars
     datos_usuarios = {usuario: [] for usuario in todos_usuarios}
     for usuarios in albums_df["Usuarios"]:
         usuarios_dict = dict(usuarios)
         for usuario in todos_usuarios:
             datos_usuarios[usuario].append(usuarios_dict.get(usuario, 0))
     
+    # Create stacked bars
+    bottom = np.zeros(len(albums_df))
     colores = plt.cm.Paired(np.linspace(0, 1, len(todos_usuarios)))
+    
     for i, usuario in enumerate(todos_usuarios):
-        plt.barh(range(len(albums_df)), datos_usuarios[usuario], 
-                left=bottom, label=usuario, color=colores[i])
+        plt.bar(range(len(albums_df)), datos_usuarios[usuario], 
+                bottom=bottom, label=usuario, color=colores[i])
         bottom += datos_usuarios[usuario]
     
-    plt.yticks(range(len(albums_df)), albums_df["Álbum_Artista"])
-    plt.xlabel("Número de escuchas por usuario")
-    plt.title("Distribución de escuchas por usuario y álbum")
+    plt.xticks(range(len(albums_df)), albums_df["Álbum_Artista"]) #rotation=45, ha='right')
+    plt.ylabel("Número de escuchas")
+    plt.title(f"Top {top_n} Álbumes - Distribución de escuchas por usuario")
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
-    guardar_grafico("albums_usuarios_bar.png", carpeta)
+    guardar_grafico("albums_bar.png", carpeta)
     plt.close()
+    
+    # Second graph: horizontal bars for top albums
+    # plt.figure(figsize=(12, 12))
+    # bottom = np.zeros(len(albums_df))
+    
+    # for i, usuario in enumerate(todos_usuarios):
+    #     plt.barh(range(len(albums_df)), datos_usuarios[usuario], 
+    #             left=bottom, label=usuario, color=colores[i])
+    #     bottom += datos_usuarios[usuario]
+    
+    # plt.yticks(range(len(albums_df)), albums_df["Álbum_Artista"])
+    # plt.xlabel("Número de escuchas")
+    # plt.title(f"Top {top_n} Álbumes - Escuchas por usuario")
+    # plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    # plt.gca().invert_yaxis()  # Invert Y axis to show highest at top
+    # plt.tight_layout()
+    # guardar_grafico("albums_usuarios_bar.png", carpeta)
+    # plt.close()
 
 # 6. Gráfico circular para cada canción
 # def plot_pastel_canciones(canciones_df, carpeta):
@@ -290,7 +454,9 @@ def procesar_datos(albums_data, carpeta):
     guardar_json(albums_data, os.path.join(carpeta, "albums_data.json"))
     
     plot_canciones(albums_df, carpeta)
+    plot_artistas(albums_df, carpeta)  # Nueva línea añadida
     plot_usuarios_coincidencias(albums_df, carpeta)
+    #plot_distribución_escuchas_albumes(albums_df, carpeta)
     generar_markdown_imagenes(carpeta, destino_md)
 
 
@@ -309,7 +475,7 @@ def generar_markdown_imagenes(carpeta, destino_md):
     print(f"Archivos PNG encontrados: {archivos_png}")
     
     # Archivos especiales que queremos incluir
-    especiales = ['albums_bar.png', 'albums_usuarios_bar.png', 'usuarios_coincidencias.png']
+    especiales = ['albums_bar.png', 'artistas_bar.png', 'usuarios_coincidencias.png']
     
     # Si el archivo no existe, crear uno con el contenido inicial
     if not os.path.exists(destino_md):
@@ -370,6 +536,8 @@ tags: ['grafico_albums']
 if __name__ == "__main__":
     archivo_md = sys.argv[1]
     carpeta = sys.argv[2]
+    if not os.path.exists(carpeta):
+        os.makedirs(carpeta)
 
     # Divide la ruta en partes utilizando os.path.split
     partes = carpeta.split(os.sep)
@@ -392,3 +560,9 @@ if __name__ == "__main__":
     print("Generando archivo markdown con las imágenes...")
     generar_markdown_imagenes(carpeta, destino_md)
     print("Proceso completado.")
+    # Después de crear tu DataFrame
+    procesar_visualizaciones(
+        albums_data,
+        carpeta_salida=f"{carpeta}/bonitas",
+        archivo_md_salida=destino_md
+    )

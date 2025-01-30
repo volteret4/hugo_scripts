@@ -20,6 +20,7 @@ import matplotlib.pyplot as plt
 import sys
 import os
 import numpy as np
+from procesar_visualizaciones import procesar_visualizaciones
 
 
 # 1. Leer el archivo Markdown
@@ -106,7 +107,61 @@ def recortar_texto(texto, max_chars=30):
     return texto[:max_chars] + "…" if len(texto) > max_chars else texto
 
 
-
+def plot_distribución_escuchas_canciones(df, carpeta):
+    """
+    Crea un gráfico de barras apiladas mostrando la distribución de escuchas por usuario,
+    donde cada segmento representa una canción diferente.
+    """
+    configurar_graficos()
+    
+    # Crear un DataFrame con las escuchas por usuario y canción
+    escuchas_por_usuario = {}
+    for idx, row in df.iterrows():
+        for user, count in row['Usuarios']:
+            if user not in escuchas_por_usuario:
+                escuchas_por_usuario[user] = []
+            escuchas_por_usuario[user].append({
+                'cancion': f"{row['Canción']} - {row['Artista']}", 
+                'escuchas': count
+            })
+    
+    # Ordenar usuarios por total de escuchas
+    totales_por_usuario = {user: sum(item['escuchas'] for item in datos) 
+                          for user, datos in escuchas_por_usuario.items()}
+    usuarios_ordenados = sorted(totales_por_usuario.keys(), 
+                              key=lambda x: totales_por_usuario[x], 
+                              reverse=True)
+    
+    # Crear el gráfico
+    plt.figure(figsize=(12, 8))
+    left = np.zeros(len(usuarios_ordenados))
+    
+    # Usar un color diferente para cada canción
+    todas_canciones = df['Canción'].unique()
+    colores = plt.cm.viridis(np.linspace(0, 1, len(todas_canciones)))
+    color_map = dict(zip(todas_canciones, colores))
+    
+    # Crear las barras apiladas
+    for cancion in todas_canciones:
+        datos = []
+        for user in usuarios_ordenados:
+            total = sum(item['escuchas'] for item in escuchas_por_usuario[user] 
+                       if item['cancion'].startswith(cancion))
+            datos.append(total)
+        
+        plt.barh(usuarios_ordenados, datos, left=left, 
+                label=recortar_texto(cancion, 30), 
+                color=color_map[cancion])
+        left += datos
+    
+    plt.xlabel('Número de escuchas')
+    plt.ylabel('Usuario')
+    plt.title('Distribución de escuchas por usuario y canción')
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', 
+              title='Canciones')
+    plt.tight_layout()
+    guardar_grafico("distribucion_escuchas_canciones.png", carpeta)
+    plt.close()
 
 # 5. Gráfico de barras de canciones
 def plot_canciones(canciones_df, carpeta):
@@ -299,7 +354,10 @@ def procesar_datos(canciones_data, carpeta):
     
     # 3. Gráficos circulares de cada canción
     #plot_pastel_canciones(canciones_df, carpeta)
-    
+
+    # 4. Gráficos de distribución de escuchas por canción
+    plot_distribución_escuchas_canciones(canciones_df, carpeta)  # Nueva línea
+
     # Generate markdown with images
     generar_markdown_imagenes(carpeta, destino_md)
 
@@ -314,7 +372,7 @@ def generar_markdown_imagenes(carpeta, destino_md):
     archivos_png = [f for f in archivos if f.endswith('.png')]
     
     # Separar los archivos especiales de los gráficos circulares
-    especiales = ['canciones_bar.png', 'usuarios_coincidencias.png']
+    especiales = ['canciones_bar.png', 'canciones_usuarios_bar.png', 'usuarios_coincidencias.png', 'distribucion_escuchas_canciones.png']
     graficos_circulares = [f for f in archivos_png if f not in especiales]
     
     # Antes de abrir el archivo, leer el contenido actual y reemplazar 'ejemplo' con la variable destino_md
@@ -368,9 +426,17 @@ def generar_markdown_imagenes(carpeta, destino_md):
 if __name__ == "__main__":
     archivo_md = sys.argv[1]    # archivo a leer para crear estadisticas
     carpeta = sys.argv[2]
+    if not os.path.exists(carpeta):
+        os.makedirs(carpeta)
     carpeta_padre = os.path.basename(os.path.dirname(carpeta))  # La carpeta padre
     nombre_carpeta = os.path.basename(carpeta)        # necesita ser /hugo/rym/static/graficos/FECHA/{CANCION|ALBUM|ARTISTA}
     destino_md = sys.argv[3]    # archivo markdown, debe estar en content/graficos/FECHa/{CANCION|ALBUM|ARTISTA}
     markdown_text = leer_markdown(archivo_md)
     canciones_data = extraer_tablas_canciones(markdown_text)
     procesar_datos(canciones_data, carpeta)
+    # Después de crear tu DataFrame
+    procesar_visualizaciones(
+        df_canciones,
+        carpeta_salida=f"{carpeta}/bonitas",
+        archivo_md_salida=destino_md
+    )
