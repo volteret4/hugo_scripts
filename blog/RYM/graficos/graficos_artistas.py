@@ -5,11 +5,13 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import sys
 import os
+import platform  # Add this line
 import numpy as np
 from matplotlib.font_manager import FontProperties, fontManager
 import unicodedata
-
-
+from matplotlib.colors import LinearSegmentedColormap
+import seaborn as sns
+from procesar_visualizaciones import procesar_visualizaciones
 
 
 def leer_markdown(file_path):
@@ -265,7 +267,7 @@ def plot_distribución_escuchas_artistas(df, carpeta, colors, usuarios_por_grafi
                     va='center', color=colors['text'], fontsize=10)
         
         plt.yticks([])
-        plt.xlabel('Número de artistas diferentes', fontsize=12, pad=15)
+        plt.xlabel('Número de artistas diferentes', fontsize=12, labelpad=15)
         plt.title(f'Distribución de artistas por usuario (Grupo {i+1} de {num_graficos})', 
                  fontsize=14, pad=20)
         
@@ -472,6 +474,7 @@ if __name__ == "__main__":
     # Suponiendo que la estructura es siempre la misma, extraemos las partes deseadas
     fecha = partes[8]  # 'mensual'
     codigo_fecha = partes[9] 
+    
     destino_md = sys.argv[3]
     
     print(f"Procesando archivo: {archivo_md}")

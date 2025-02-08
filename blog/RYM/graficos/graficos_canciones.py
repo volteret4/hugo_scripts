@@ -168,18 +168,18 @@ def plot_canciones(canciones_df, carpeta):
     configurar_graficos()
     
     # Primer gráfico: barras horizontales del total de escuchas
-    plt.figure(figsize=(10, 12))
-    canciones_df["Canción recortada"] = canciones_df["Canción"].apply(lambda x: recortar_texto(x, 30))
-    plt.barh(canciones_df["Canción recortada"], canciones_df["Total escuchas"], color="#cba6f7")
-    plt.xlabel("Número total de escuchas")
-    plt.ylabel("Canción")
-    plt.title("Canciones más compartidas")
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=10)
-    plt.gca().invert_yaxis()
-    plt.tight_layout()
-    guardar_grafico("canciones_bar.png", carpeta)
-    plt.close()
+    # plt.figure(figsize=(10, 12))
+    # canciones_df["Canción recortada"] = canciones_df["Canción"].apply(lambda x: recortar_texto(x, 30))
+    # plt.barh(canciones_df["Canción recortada"], canciones_df["Total escuchas"], color="#cba6f7")
+    # plt.xlabel("Número total de escuchas")
+    # plt.ylabel("Canción")
+    # plt.title("Canciones más compartidas")
+    # plt.xticks(fontsize=12)
+    # plt.yticks(fontsize=10)
+    # plt.gca().invert_yaxis()
+    # plt.tight_layout()
+    # guardar_grafico("canciones_bar.png", carpeta)
+    # plt.close()
     
     # Segundo gráfico: barras apiladas por usuario
     plt.figure(figsize=(12, len(canciones_df) * 0.5))
@@ -316,7 +316,7 @@ def plot_usuarios_coincidencias(canciones_df, carpeta):
     plt.yticks(y_pos, usuarios_ordenados)
     plt.xlabel("Número de coincidencias")
     plt.ylabel("Usuario")
-    plt.title("Coincidencias entre usuarios")
+    plt.title("Coincidencias únicas entre usuarios")
     
     # Ajustar leyenda
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', 
@@ -372,29 +372,30 @@ def generar_markdown_imagenes(carpeta, destino_md):
     archivos_png = [f for f in archivos if f.endswith('.png')]
     
     # Separar los archivos especiales de los gráficos circulares
-    especiales = ['canciones_bar.png', 'canciones_usuarios_bar.png', 'usuarios_coincidencias.png', 'distribucion_escuchas_canciones.png']
+    especiales = ['canciones_usuarios_bar.png', 'usuarios_coincidencias.png', 'distribucion_escuchas_canciones.png']    # GRAFICO COMENTADO:'canciones_bar.png', 
     graficos_circulares = [f for f in archivos_png if f not in especiales]
     
-    # Antes de abrir el archivo, leer el contenido actual y reemplazar 'ejemplo' con la variable destino_md
-    if os.path.exists(destino_md):  # Si el archivo existe, reemplazar "ejemplo"
-        with open(destino_md, "r", encoding='utf-8') as f:
-            contenido = f.read()
+    # # Antes de abrir el archivo, leer el contenido actual y reemplazar 'ejemplo' con la variable destino_md
+    # if os.path.exists(destino_md):  # Si el archivo existe, reemplazar "ejemplo"
+    #     with open(destino_md, "r", encoding='utf-8') as f:
+    #         contenido = f.read()
 
-        # Reemplazar "ejemplo" por el valor de destino_md
-        contenido = contenido.replace("ejemplo", destino_md)
-        contenido = contenido.replace("tag1", "grafico_canciones")
+    #     # Reemplazar "ejemplo" por el valor de destino_md
+    #     #contenido = contenido.replace("ejemplo", destino_md)
+    #     contenido = contenido.replace("tag1", "grafico_canciones")
 
-        # Escribir de nuevo el contenido modificado en el archivo
-        with open(destino_md, "w", encoding='utf-8') as f:
-            f.write(contenido)
+    #     # Escribir de nuevo el contenido modificado en el archivo
+    #     with open(destino_md, "w", encoding='utf-8') as f:
+    #         f.write(contenido)
 
     # Ahora, proceder con la parte de agregar los gráficos al archivo
     with open(destino_md, "a", encoding='utf-8') as f:
+        f.write("Gráficos ")
         # Primero escribimos los gráficos especiales
         for especial in especiales:
             if especial in archivos_png:
                 nombre_sin_extension = os.path.splitext(especial)[0]
-                f.write(f"![{nombre_sin_extension}](/rym/graficos/{carpeta_padre} {nombre_carpeta}/{especial})\n\n")
+                f.write(f"![{nombre_sin_extension}](/rym/graficos/{carpeta_padre}/{nombre_carpeta}/{especial})\n\n")
         
         # # Tabla con los gráficos circulares
         # num_graficos = len(graficos_circulares)
@@ -425,15 +426,22 @@ def generar_markdown_imagenes(carpeta, destino_md):
 # 9. Ejecución
 if __name__ == "__main__":
     archivo_md = sys.argv[1]    # archivo a leer para crear estadisticas
+    # if not os.path.exists(archivo_md):
+    #     with open(archivo_md, 'w'):
+    #         pass  # No escribimos nada, solo creamos el archivo
+        
     carpeta = sys.argv[2]
     if not os.path.exists(carpeta):
         os.makedirs(carpeta)
-    carpeta_padre = os.path.basename(os.path.dirname(carpeta))  # La carpeta padre
-    nombre_carpeta = os.path.basename(carpeta)        # necesita ser /hugo/rym/static/graficos/FECHA/{CANCION|ALBUM|ARTISTA}
-    destino_md = sys.argv[3]    # archivo markdown, debe estar en content/graficos/FECHa/{CANCION|ALBUM|ARTISTA}
+    carpeta_padre = os.path.basename(os.path.dirname(carpeta))  # La carpeta padre     # .sh: fecha
+    nombre_carpeta = os.path.basename(carpeta)          # necesita ser /hugo/rym/static/graficos/FECHA/{CANCION|ALBUM|ARTISTA}     # .sh:tipo cancion, album...
+    
+    destino_md = sys.argv[3]                            # archivo markdown, debe estar en content/graficos/FECHa/{CANCION|ALBUM|ARTISTA}
+    
     markdown_text = leer_markdown(archivo_md)
     canciones_data = extraer_tablas_canciones(markdown_text)
     procesar_datos(canciones_data, carpeta)
+    
     # Después de crear tu DataFrame
     procesar_visualizaciones(
         df_canciones,

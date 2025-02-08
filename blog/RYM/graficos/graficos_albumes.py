@@ -297,7 +297,16 @@ def plot_canciones(albums_df, carpeta, top_n=20):
                 bottom=bottom, label=usuario, color=colores[i])
         bottom += datos_usuarios[usuario]
     
-    plt.xticks(range(len(albums_df)), albums_df["Álbum_Artista"]) #rotation=45, ha='right')
+    # Configuración modificada de las etiquetas del eje X
+    plt.xticks(range(len(albums_df)), albums_df["Álbum_Artista"], 
+               rotation=45,           # Ángulo de rotación
+               ha='right',           # Alineación horizontal
+               rotation_mode='anchor' # Modo de rotación
+    )
+    
+    # Ajustar los márgenes para que las etiquetas no se corten
+    plt.subplots_adjust(bottom=0.2)  # Aumentar el margen inferior
+    
     plt.ylabel("Número de escuchas")
     plt.title(f"Top {top_n} Álbumes - Distribución de escuchas por usuario")
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
@@ -482,7 +491,7 @@ def generar_markdown_imagenes(carpeta, destino_md):
         print(f"Creando nuevo archivo markdown: {destino_md}")
         with open(destino_md, "w", encoding='utf-8') as f:
             f.write(f"""---
-title: "Estadísticas de álbumes"
+title: "Estadísticas {fecha}de álbumes"
 date: {os.path.basename(os.path.dirname(os.path.dirname(destino_md)))}
 draft: false
 tags: ['grafico_albums']
@@ -535,10 +544,16 @@ tags: ['grafico_albums']
 # 9. Ejecución
 if __name__ == "__main__":
     archivo_md = sys.argv[1]
+    if not os.path.exists(archivo_md):
+        with open(archivo_md, 'w'):
+            pass  # No escribimos nada, solo creamos el archivo
+            
     carpeta = sys.argv[2]
     if not os.path.exists(carpeta):
         os.makedirs(carpeta)
 
+    destino_md = sys.argv[3]
+    
     # Divide la ruta en partes utilizando os.path.split
     partes = carpeta.split(os.sep)
 
@@ -546,7 +561,6 @@ if __name__ == "__main__":
     fecha = partes[8]  # 'mensual'
     codigo_fecha = partes[9]  # '01-24'
     
-    destino_md = sys.argv[3]
     
     print(f"Procesando archivo: {archivo_md}")
     print(f"Carpeta de salida: {carpeta}")
