@@ -9,3 +9,5 @@ playlists/spotify/token_crear.txt
 playlists/spotify/token.txt
 playlists/youtube/client_secret.json
 playlists/spotify/token_private.txt
+migration_checkpoint.json
+migration.log
