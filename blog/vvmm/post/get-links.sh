@@ -49,7 +49,7 @@ done
 
 # eliminamos caracteres no alfanumericos.....que pena no poder poner una tilde
 artist="$(bash "$HOME/Scripts/hugo_scripts/limpiar_var.sh" "${artista}")"
-album="$(bash "$HOME"/hugo/hugo_scripts/limpiar_var.sh "${albuma}")"
+album="$(bash "$HOME"/Scripts/hugo_scripts/limpiar_var.sh "${albuma}")"
 artista_guion="${artist} _"                                         # Aqui adjunta el guion bajo
 post_pre="${artista_guion}-${album}"
 post_guiones="$(echo "$post_pre" | sed 's/ /-/g' | sed 's/,//g')"
@@ -84,14 +84,14 @@ echo -e "${YELLOW}Actualizando listado de playlists y about_file.${RESET}"
 
 about_file="$HOME/Scripts/web/vvmm/content/about.md"
 
-python3 "$HOME"/hugo/hugo_scripts/playlists/spotify/sp_playlist.py
+python3 "$HOME"/Scripts/hugo_scripts/playlists/spotify/sp_playlist.py
 python3 "$enlaces_dir"/spotify/sp_playlist_md.py
 rm "${about_file}"
 cp "${about_file}.skel" "${about_file}"
 echo "" >> "$about_file"
 echo "_Actualizado el "$(date +%d-%m-%Y)"_" >> "$about_file"
 echo "" >> "$about_file"
-cat "$HOME"/hugo/hugo_scripts//playlists/spotify/playlists.md >> "$about_file"
+cat "$HOME"/Scripts/hugo_scripts//playlists/spotify/playlists.md >> "$about_file"
 
 # echo "# Genero"
 # echo "" >> $about_file
