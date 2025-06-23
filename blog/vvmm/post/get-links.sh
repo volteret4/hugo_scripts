@@ -371,7 +371,7 @@ caratula="$(python3 "$post_dir"/portadas/caratula-spotify.py "$artist" "$album")
 if [[ $caratula =~ Error ]]; then
     python3  "$post_dir"/portadas/caratula-alternativa.py "$artist" "$album" "$post_folder"
     #bash $post_dir/portadas/portada_mb.sh "$artist" "$album" "$url_musicbrainz"
-    mv $HOME/Scripts/web/vvmm/static/portadas/$artist-_-$album.jpg $post_folder/image.jpeg
+    mv $HOME/hugo/web/vvmm/static/portadas/$artist-_-$album.jpg $post_folder/image.jpeg
     echo "caratula descargada desde music brainz o discogs"
 else
     echo "caratula descargada desde spotify"

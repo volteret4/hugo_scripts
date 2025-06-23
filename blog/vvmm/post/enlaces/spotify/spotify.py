@@ -29,8 +29,8 @@ load_dotenv()
 home_dir = os.environ["HOME"]
 
 # Definir las rutas
-cache_path = os.path.join(home_dir, "hugo", "hugo_scripts", "playlists", "spotify", "token.txt")
-token_script = os.path.join(home_dir, "hugo", "hugo_scripts", "playlists", "spotify", "sp_playlist.py")
+cache_path = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "token.txt")
+token_script = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "sp_playlist.py")
 def renovar_token():
     """Ejecuta el script de renovación de token"""
     try:

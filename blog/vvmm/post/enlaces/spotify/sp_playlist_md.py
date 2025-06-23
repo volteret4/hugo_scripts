@@ -26,9 +26,9 @@ CLIENT_SECRET = os.getenv('SPOTIFY_SECRET')
 redirect_uri = 'http://127.0.0.1:8090'
 scope = "playlist-read-private"
 browser = False
-cache_path = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "token.txt")
-playlist_path = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "playlists.txt") 
-output_path = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "playlists.md")
+cache_path = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "token.txt")
+playlist_path = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "playlists.txt") 
+output_path = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "playlists.md")
 
 # Inicializa el cliente de autenticación
 sp_oauth = SpotifyOAuth(CLIENT_ID, CLIENT_SECRET, redirect_uri, scope, browser, cache_path)

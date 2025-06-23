@@ -12,7 +12,7 @@ CLIENT_ID = os.getenv('SPOTIFY_CLIENT')
 CLIENT_SECRET = os.getenv('SPOTIFY_SECRET')
 REDIRECT_URI = 'http://127.0.0.1:8090'
 scope = "playlist-modify-public playlist-modify-private"  # Incluye scopes necesarios para modificar playlists
-cache_path = "/home/ansible/scripts/playlists/spotify/token_crear.txt"
+cache_path = "/home/pepe/Scripts/playlists/spotify/token_crear.txt"
 
 # Verifica que se hayan pasado el ID de la canción y el ID de la playlist como argumentos
 if len(sys.argv) < 3:

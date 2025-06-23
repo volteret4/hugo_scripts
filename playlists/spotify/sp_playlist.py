@@ -30,8 +30,8 @@ redirect_uri = 'http://127.0.0.1:8090'
 # Cambia el scope para incluir tanto playlists públicas como privadas
 scope = "playlist-read-private playlist-read-collaborative"
 
-cache_path = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "token_private_pl.txt")
-playlist = os.path.join(home_dir, "hugo", "scripts", "playlists", "spotify", "playlists.txt")
+cache_path = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "token_private_pl.txt")
+playlist = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "playlists.txt")
 
 # Inicializa el cliente de autenticación
 sp_oauth = SpotifyOAuth(CLIENT_ID, CLIENT_SECRET, redirect_uri, scope=scope, open_browser=False, cache_path=cache_path)

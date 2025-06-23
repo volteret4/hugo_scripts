@@ -13,7 +13,7 @@ CLIENT_ID = os.getenv('SPOTIFY_CLIENT')
 CLIENT_SECRET = os.getenv('SPOTIFY_SECRET')
 REDIRECT_URI = 'http://127.0.0.1:8090'
 scope = "playlist-read-private"  # Scope correcto para leer playlists privadas
-cache_path = "/home/ansible/scripts/playlists/spotify/token_private.txt"
+cache_path = "/home/pepe/Scripts/playlists/spotify/token_private.txt"
 
 # Verificación de las variables de entorno
 if not CLIENT_ID or not CLIENT_SECRET:

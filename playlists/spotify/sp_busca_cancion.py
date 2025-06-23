@@ -13,7 +13,7 @@ CLIENT_SECRET = os.getenv('SPOTIFY_SECRET')
 redirect_uri = 'http://127.0.0.1:8090'
 scope = "playlist-read-private"
 browser = False
-cache_path = "/home/ansible/scripts/playlists/spotify/token.txt"
+cache_path = "/home/pepe/Scripts/playlists/spotify/token.txt"
 
 artista = sys.argv[1]
 titulo = sys.argv[2]

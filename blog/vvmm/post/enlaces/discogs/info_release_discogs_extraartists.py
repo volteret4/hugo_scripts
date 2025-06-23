@@ -18,7 +18,7 @@ import sys
 import os 
 
 home_dir = os.environ["HOME"]
-file_info = os.path.join(home_dir, "hugo", "hugo_scripts", "blog", "vvmm", "post", "discogs_info_extra.txt")
+file_info = os.path.join(home_dir, "Scripts", "hugo_scripts", "blog", "vvmm", "post", "discogs_info_extra.txt")
 
 # https://www.discogs.com/release/12950315-Folamour-Ordinary-Drugs   test me!!
 
