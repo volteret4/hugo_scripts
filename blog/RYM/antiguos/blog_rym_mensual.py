@@ -11,7 +11,7 @@ import calendar
 load_dotenv()
 
 # Tu API key de Last.fm
-#filename="/home/pi/hugo/web/rym/lastfm_monthly_stats.md"
+#filename="/home/pepe/hugo/web/rym/lastfm_monthly_stats.md"
 API_KEY = os.getenv('LASTFM_API_KEY')
 BASE_URL = "http://ws.audioscrobbler.com/2.0/"
 fecha_actual = datetime.now()

@@ -4,7 +4,7 @@
 POSTS_DIR="/mnt/NFS/blogs/tumtumpa"
 
 # Directorio de tu repositorio Hugo
-HUGO_DIR="/home/pi/hugo/web/tumtumpa"
+HUGO_DIR="/home/pepe/hugo/web/tumtumpa"
 
 # Seleccionar un archivo Markdown aleatorio de la carpeta de posts
 OBSIDIAN_FILE=$(find $POSTS_DIR/*.md | shuf -n 1)
@@ -82,7 +82,7 @@ sed -i "s/^draft\: true/draft\: false/" "$HUGO_POST"
 
 
 # Añadir a vvmm
-bash /home/pi/hugo/hugo_scripts/blog/vvmm/post/get-links.sh "${artista}" "${album}" $tags
+bash /home/pepe/Scripts/hugo_scripts/blog/vvmm/post/get-links.sh "${artista}" "${album}" $tags
 
 
 # Copiar imagen de vvmm
@@ -90,7 +90,7 @@ cp "${HOME}/hugo/web/vvmm/content/posts/${titulo_post}/image.jpeg" "$HUGO_DIR/co
 
 
 # Copiar links de vvmm.
-vvmm_post="/home/pi/hugo/web/vvmm/content/posts/$titulo_post/index.md"
+vvmm_post="/home/pepe/hugo/web/vvmm/content/posts/$titulo_post/index.md"
 
 bandcamp_url=$(awk '/bandcamp/ {print}' "$vvmm_post" | sed 's/.*(\(.*\))/\1/' | sed 's/ -->//')
 wikipedia_url=$(awk '/wikipedia/ {print}' "$vvmm_post" | sed 's/.*(\(.*\))/\1/' | sed 's/ -->//')

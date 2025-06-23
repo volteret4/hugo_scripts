@@ -14,7 +14,7 @@ def main():
         print("Uso: python script.py <archivo> <cadena_busqueda>")
         return
 
-    archivo = "/home/pi/hugo/web/vvmm/releases.txt"
+    archivo = "/home/pepe/hugo/web/vvmm/releases.txt"
     cadena_busqueda = normalize_text(sys.argv[1].lower())  # Convertir y quitar acentos de la cadena de búsqueda
 
     try:

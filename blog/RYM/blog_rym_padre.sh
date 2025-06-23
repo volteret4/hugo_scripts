@@ -1,8 +1,8 @@
 #! /usr/bin/env bash
 
 # Variables principales
-RYM_BLOG="$HOME/hugo/web/rym"
-RYM_SCRIPTS="$HOME/hugo/hugo_scripts/blog/RYM"
+RYM_BLOG="$HOME/Scripts/web/rym"
+RYM_SCRIPTS="$HOME/Scripts/hugo_scripts/blog/RYM"
 
 
 # Initialize script run flags
@@ -12,10 +12,10 @@ weekly_script_ran=false
 
 
 # Telegram Bot Configuration
-source /home/pi/hugo/hugo_scripts/blog/RYM/.env
+source /home/pepe/Scripts/hugo_scripts/blog/RYM/.env
 
 # Activate Python virtual environment
-source "$HOME/scripts/python_venv/bin/activate"
+source "$HOME/Scripts/python-venv/bin/activate"
 
 
 # Function to send Telegram message

@@ -10,19 +10,19 @@ tipo="$2"
 
 
 # Rutas de scripts de Python
-cancionpy="$HOME/hugo/hugo_scripts/blog/RYM/graficos/graficos_canciones.py"
-albumpy="$HOME/hugo/hugo_scripts/blog/RYM/graficos/graficos_albumes.py"
-artistapy="$HOME/hugo/hugo_scripts/blog/RYM/graficos/graficos_artistas.py"
+cancionpy="$HOME/Scripts/hugo_scripts/blog/RYM/graficos/graficos_canciones.py"
+albumpy="$HOME/Scripts/hugo_scripts/blog/RYM/graficos/graficos_albumes.py"
+artistapy="$HOME/Scripts/hugo_scripts/blog/RYM/graficos/graficos_artistas.py"
 
 # Ruta carpeta de gráficos
-canciones="/home/pi/hugo/web/rym/static/graficos/${tipo}"
-albumes="/home/pi/hugo/web/rym/static/graficos/${tipo}"
-artistas="/home/pi/hugo/web/rym/static/graficos/${tipo}"
+canciones="/home/pepe/hugo/web/rym/static/graficos/${tipo}"
+albumes="/home/pepe/hugo/web/rym/static/graficos/${tipo}"
+artistas="/home/pepe/hugo/web/rym/static/graficos/${tipo}"
 
 # Ruta de salida
-salida_canciones="/home/pi/hugo/web/rym/content/estadisticas/${tipo}/"
-salida_albumes="/home/pi/hugo/web/rym/content/estadisticas/${tipo}/"
-salida_artistas="/home/pi/hugo/web/rym/content/estadisticas/${tipo}/"
+salida_canciones="/home/pepe/hugo/web/rym/content/estadisticas/${tipo}/"
+salida_albumes="/home/pepe/hugo/web/rym/content/estadisticas/${tipo}/"
+salida_artistas="/home/pepe/hugo/web/rym/content/estadisticas/${tipo}/"
 
 # Ejecutar el script de Python según el tipo
 # if [ "$tipo" == "semanal" ]; then

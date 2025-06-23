@@ -18,8 +18,8 @@
 # DECLARACION DE VARIABLES:
 
 # Rutas.
-enlaces_dir="${HOME}/hugo/hugo_scripts/blog/vvmm/post/enlaces"
-post_dir="${HOME}/hugo/hugo_scripts/blog/vvmm/post"
+enlaces_dir="${HOME}/Scripts/hugo_scripts/blog/vvmm/post/enlaces"
+post_dir="${HOME}/Scripts/hugo_scripts/blog/vvmm/post"
 blog="${HOME}/hugo/web/vvmm"
 # Parametros
 artista="${1}"
@@ -48,7 +48,7 @@ done
 # tagE="${7}"
 
 # eliminamos caracteres no alfanumericos.....que pena no poder poner una tilde
-artist="$(bash "$HOME/hugo/hugo_scripts/limpiar_var.sh" "${artista}")"
+artist="$(bash "$HOME/Scripts/hugo_scripts/limpiar_var.sh" "${artista}")"
 album="$(bash "$HOME"/hugo/hugo_scripts/limpiar_var.sh "${albuma}")"
 artista_guion="${artist} _"                                         # Aqui adjunta el guion bajo
 post_pre="${artista_guion}-${album}"
@@ -61,10 +61,10 @@ if [[ -f $post_file ]];then
     exit 0
 fi
 # shellcheck source=/dev/null
-source "${HOME}/scripts/python_venv/bin/activate"
+source "${HOME}/Scriptspython-venv/bin/activate"
 
 # .env_root: COLORES!
-#source ${HOME}/scripts/.env_root
+#source ${HOME}/Scripts.env_root
 
 # Definir colores
 #RED='\033[0;31m'
@@ -82,7 +82,7 @@ RESET='\033[0m'  # Restablece al color por defecto
 
 echo -e "${YELLOW}Actualizando listado de playlists y about_file.${RESET}"
 
-about_file="$HOME/hugo/web/vvmm/content/about.md"
+about_file="$HOME/Scripts/web/vvmm/content/about.md"
 
 python3 "$HOME"/hugo/hugo_scripts/playlists/spotify/sp_playlist.py
 python3 "$enlaces_dir"/spotify/sp_playlist_md.py
@@ -95,15 +95,15 @@ cat "$HOME"/hugo/hugo_scripts//playlists/spotify/playlists.md >> "$about_file"
 
 # echo "# Genero"
 # echo "" >> $about_file
-# cat $HOME/hugo/hugo_scripts//playlists/spotify/playlists_genre.md >> $about_file
+# cat $HOME/Scripts/hugo_scripts//playlists/spotify/playlists_genre.md >> $about_file
 # echo "" >> $about_file
 # echo "# Humor"
 # echo "" >> $about_file
-# cat $HOME/hugo/hugo_scripts//playlists/spotify/playlists_mood.md >> $about_file
+# cat $HOME/Scripts/hugo_scripts//playlists/spotify/playlists_mood.md >> $about_file
 # echo "" >> $about_file
 # echo "# Gentuza"
 # echo "" >> $about_file
-# cat $HOME/hugo/hugo_scripts//playlists/spotify/playlists_people.md >> $about_file
+# cat $HOME/Scripts/hugo_scripts//playlists/spotify/playlists_people.md >> $about_file
 # echo "" >> $about_file
 
 
@@ -210,7 +210,7 @@ if [[ -z $url_spotify ]]; then
     spotify="<!-- [![spotify](../links/svg/spotify.png (putify))]("$url_spotify") -->"
 elif [[ $url_spotify =~ "Error" ]]; then
     echo "error en el script de spotify en\
-        /home/pi/hugo/hugo_scripts//blog/vvmm/post/enlaces/spotify/spotify.py"
+        /home/pepe/Scripts/hugo_scripts//blog/vvmm/post/enlaces/spotify/spotify.py"
     exit 0
 else 
     spotify="[![spotify](../links/svg/spotify.png (putify))]("$url_spotify")"
@@ -371,7 +371,7 @@ caratula="$(python3 "$post_dir"/portadas/caratula-spotify.py "$artist" "$album")
 if [[ $caratula =~ Error ]]; then
     python3  "$post_dir"/portadas/caratula-alternativa.py "$artist" "$album" "$post_folder"
     #bash $post_dir/portadas/portada_mb.sh "$artist" "$album" "$url_musicbrainz"
-    mv $HOME/hugo/web/vvmm/static/portadas/$artist-_-$album.jpg $post_folder/image.jpeg
+    mv $HOME/Scripts/web/vvmm/static/portadas/$artist-_-$album.jpg $post_folder/image.jpeg
     echo "caratula descargada desde music brainz o discogs"
 else
     echo "caratula descargada desde spotify"
@@ -407,10 +407,10 @@ if [[ -n ${tags[4]} ]]
 fi
 
 if [[ -f "$HOME"/pollo.txt ]]; then
-    pollo="$(cat $HOME/hugo/pollo.txt)"
+    pollo="$(cat $HOME/Scripts/pollo.txt)"
     echo " " >> $post_file
     echo $pollo >> $post_file
-    rm $HOME/hugo/pollo.txt
+    rm $HOME/Scripts/pollo.txt
 fi
 
 

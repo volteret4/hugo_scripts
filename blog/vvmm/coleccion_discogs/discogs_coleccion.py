@@ -19,8 +19,8 @@ def buscar_imagen(album, artista):
     Busca imagen en las rutas posibles
     """
     nombre_archivo = formatear_nombre_archivo(artista, album)
-    ruta_static = f'/home/pi/hugo/web/vvmm/static/portadas/{nombre_archivo}.jpg'
-    ruta_content = f'/home/pi/hugo/web/vvmm/content/colecciones/images/{nombre_archivo}.jpg'
+    ruta_static = f'/home/pepe/hugo/web/vvmm/static/portadas/{nombre_archivo}.jpg'
+    ruta_content = f'/home/pepe/hugo/web/vvmm/content/colecciones/images/{nombre_archivo}.jpg'
     
     if os.path.exists(ruta_static):
         return True, 'static', ruta_static
@@ -60,7 +60,7 @@ def obtener_datos_discogs(username, token):
                     print(f"Descargando imagen para: {datos_album['artista']} - {datos_album['album']}")
                     try:
                         result = subprocess.run(
-                            ["python3", "/home/pi/hugo/hugo_scripts/blog/vvmm/post/portadas/caratula-spotify.py", 
+                            ["python3", "/home/pepe/Scripts/hugo_scripts/blog/vvmm/post/portadas/caratula-spotify.py", 
                              datos_album['artista'], datos_album['album']],
                             check=True,
                             stdout=subprocess.PIPE,
@@ -76,9 +76,9 @@ def obtener_datos_discogs(username, token):
                         print(f"Error al ejecutar caratula-spotify.py: {e.stdout}")
                         print("Lanzando el script de respaldo...")
                         subprocess.run(
-                            ["python3", "/home/pi/hugo/hugo_scripts/blog/vvmm/post/portadas/caratula-alternativa.py",
+                            ["python3", "/home/pepe/Scripts/hugo_scripts/blog/vvmm/post/portadas/caratula-alternativa.py",
                              datos_album['artista'], datos_album['album'], 
-                             "/home/pi/hugo/web/vvmm/static/portadas/"]
+                             "/home/pepe/hugo/web/vvmm/static/portadas/"]
                         )
                 else:
                     print(f"Imagen ya existe en {ubicacion} para: {datos_album['artista']} - {datos_album['album']}")
@@ -107,7 +107,7 @@ def generar_markdown(datos_coleccion, ruta_archivo):
     Genera un único archivo markdown con toda la colección
     """
     fecha_hoy = datetime.today().strftime('%d-%m-%Y')
-    carpeta_imagenes = f'/home/pi/hugo/web/vvmm/static/portadas'
+    carpeta_imagenes = f'/home/pepe/hugo/web/vvmm/static/portadas'
     os.makedirs(carpeta_imagenes, exist_ok=True)
     
     os.makedirs(os.path.dirname(ruta_archivo), exist_ok=True)
@@ -154,7 +154,7 @@ def main():
     USERNAME = os.getenv('DISCOGS_USER')
     
     fecha_hoy = datetime.today().strftime('%d-%m-%Y')
-    RUTA_ARCHIVO = f'/home/pi/hugo/web/vvmm/content/coleccion/{fecha_hoy}.md'
+    RUTA_ARCHIVO = f'/home/pepe/hugo/web/vvmm/content/coleccion/{fecha_hoy}.md'
     
     datos = obtener_datos_discogs(USERNAME, TOKEN)
     

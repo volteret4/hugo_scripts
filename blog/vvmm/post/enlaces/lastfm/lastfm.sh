@@ -14,11 +14,11 @@
 
 # Configuración
 # carpeta=$(dirname $(readlink "$0"))
-# source "${carpeta}/.env"source $HOME/hugo/scripts/blog/vvmm/post/enlaces/.env
+# source "${carpeta}/.env"source $HOME/Scripts/Scriptsblog/vvmm/post/enlaces/.env
 
 ARTIST="${1}"
 ALBUM="${2}"
-LASTFM_APIKEY="$(cat $HOME/hugo/hugo_scripts/blog/vvmm/post/enlaces/lastfm/.env)"
+LASTFM_APIKEY="$(cat $HOME/Scripts/hugo_scripts/blog/vvmm/post/enlaces/lastfm/.env)"
 
 # Verifica que los parámetros no estén vacíos
 if [ -z "$ARTIST" ] || [ -z "$ALBUM" ]; then

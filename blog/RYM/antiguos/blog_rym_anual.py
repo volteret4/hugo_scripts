@@ -13,7 +13,7 @@ API_KEY = os.getenv('LASTFM_API_KEY')
 BASE_URL = "http://ws.audioscrobbler.com/2.0/"
 fecha_actual = datetime.now()
 fecha_formateada = fecha_actual.strftime("%d-%m-%Y")
-filename = "/home/pi/hugo/web/rym/lastfm_yearly_stats.md"
+filename = "/home/pepe/hugo/web/rym/lastfm_yearly_stats.md"
 
 USERNAMES = [
     "alberto_gu",
