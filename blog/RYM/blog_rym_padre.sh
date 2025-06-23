@@ -15,7 +15,7 @@ weekly_script_ran=false
 source /home/pepe/Scripts/hugo_scripts/blog/RYM/.env
 
 # Activate Python virtual environment
-source "$HOME/Scripts/python-venv/bin/activate"
+source "$HOME/Scripts/python-env/bin/activate"
 
 
 # Function to send Telegram message

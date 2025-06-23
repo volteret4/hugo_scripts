@@ -61,7 +61,7 @@ if [[ -f $post_file ]];then
     exit 0
 fi
 # shellcheck source=/dev/null
-source "${HOME}/Scripts/python-venv/bin/activate"
+source "${HOME}/Scripts/python-env/bin/activate"
 
 # .env_root: COLORES!
 #source ${HOME}/Scripts.env_root
