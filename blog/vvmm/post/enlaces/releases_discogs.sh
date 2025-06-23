@@ -17,7 +17,7 @@ if [[ $# -ne 1 ]]; then
 fi
 
 album="$1"
-file="$HOME/web/vvmm/releases.txt"
+file="$HOME/hugo/web/vvmm/releases.txt"
 
 # Salir si no existe el archivo releases.txt
 if [[ ! -e $file ]]; then

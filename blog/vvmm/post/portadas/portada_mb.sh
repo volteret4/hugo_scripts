@@ -10,7 +10,7 @@ usage() {
 download_cover_art() {
     local mbid=$1
     local cover_art_url="http://coverartarchive.org/release/$mbid/front-1200"
-    local cover_file="$HOME/web/vvmm/links/portada/image.jpeg"
+    local cover_file="$HOME/hugo/web/vvmm/links/portada/image.jpeg"
     
     # Descargar la imagen
     echo "Descargando portada del álbum...$cover_art_url"
@@ -45,7 +45,7 @@ if [ $# -eq 2 ]; then
     artist=$1
     album=$2
     
-    cover_file="$HOME/web/vvmm/links/portada/image.jpeg"
+    cover_file="$HOME/hugo/web/vvmm/links/portada/image.jpeg"
     rm $cover_file
     
     mbid=$(get_mbid "$artist" "$album")

@@ -82,7 +82,7 @@ RESET='\033[0m'  # Restablece al color por defecto
 
 echo -e "${YELLOW}Actualizando listado de playlists y about_file.${RESET}"
 
-about_file="$HOME/Scripts/web/vvmm/content/about.md"
+about_file="$HOME/hugo/web/vvmm/content/about.md"
 
 python3 "$HOME"/Scripts/hugo_scripts/playlists/spotify/sp_playlist.py
 python3 "$enlaces_dir"/spotify/sp_playlist_md.py
