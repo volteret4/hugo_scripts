@@ -2,7 +2,7 @@ import requests
 import argparse
 import os
 from dotenv import load_dotenv
-import discogs_client
+import discogs-client
 import musicbrainzngs
 
 # Cargar variables de entorno
