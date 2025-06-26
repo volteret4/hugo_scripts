@@ -30,7 +30,7 @@ redirect_uri = 'http://127.0.0.1:8090'
 # Cambia el scope para incluir tanto playlists públicas como privadas
 scope = "playlist-read-private playlist-read-collaborative"
 
-cache_path = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "token_private_pl.txt")
+cache_path = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "token.txt")
 playlist = os.path.join(home_dir, "Scripts", "hugo_scripts", "playlists", "spotify", "playlists.txt")
 
 # Inicializa el cliente de autenticación
