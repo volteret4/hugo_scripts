@@ -84,7 +84,7 @@ echo -e "${YELLOW}Actualizando listado de playlists y about_file.${RESET}"
 
 about_file="$HOME/hugo/web/vvmm/content/about.md"
 
-source "$HOME/Scripts/python-env/bin/activate"
+
 python3 "$HOME"/Scripts/hugo_scripts/playlists/spotify/sp_playlist.py
 python3 "$enlaces_dir"/spotify/sp_playlist_md.py
 rm "${about_file}"
@@ -363,14 +363,14 @@ printf "\n%b%s%b\n" "$GREEN" "Descargando carátulas" "$RESET"
 # Descarga carátula de SPOTIFY.
 post_folder="$(dirname $post_file)"
 cd $post_folder
-#caratula="$(python3 "$post_dir"/portadas/caratula-spotify.py "$artist" "$album")"
+caratula="$(/home/pepe/Scripts/python-env/bin/python3 "$post_dir"/portadas/caratula-spotify.py "$artist" "$album")"
 caratula=Error # desactivar descarga en spotify
 
 
 # Descarga carátula de musicbrainz. _
 #caratula="$post_folder/image.jpeg" 
 if [[ $caratula =~ Error ]]; then
-    python3  "$post_dir"/portadas/caratula-alternativa.py "$artist" "$album" "$post_folder"
+    /home/pepe/Scripts/python-env/bin/python3  "$post_dir"/portadas/caratula-alternativa.py "$artist" "$album" "$post_folder"
     #bash $post_dir/portadas/portada_mb.sh "$artist" "$album" "$url_musicbrainz"
     mv $HOME/hugo/web/vvmm/static/portadas/$artist-_-$album.jpg $post_folder/image.jpeg
     echo "caratula descargada desde music brainz o discogs"
