@@ -12,15 +12,32 @@ LASTFM_API_KEY = os.getenv("LASTFM_API_KEY")  # Solo necesitas una API key perso
 DISCOGS_TOKEN = os.getenv("DISCOGS_TOKEN")    # Token personal de usuario
 
 
-def validar_url_imagen(url):
+def validar_url_imagen(url, fuente=""):
     """Verifica que la URL de imagen sea válida y accesible."""
     try:
-        response = requests.head(url, timeout=10)
-        if response.status_code == 200:
-            content_type = response.headers.get('content-type', '')
-            return content_type.startswith('image/')
+        # Para Cover Art Archive, usar GET en lugar de HEAD ya que a veces HEAD falla
+        if 'coverartarchive.org' in url:
+            response = requests.get(url, timeout=15, stream=True)
+            # Leer solo los primeros bytes para verificar
+            content = next(response.iter_content(1024), b'')
+            if response.status_code == 200 and len(content) > 0:
+                content_type = response.headers.get('content-type', '')
+                return content_type.startswith('image/') or len(content) > 500  # Si tiene contenido, probablemente es imagen
+        else:
+            # Para otras fuentes, usar HEAD
+            response = requests.head(url, timeout=10)
+            if response.status_code == 200:
+                content_type = response.headers.get('content-type', '')
+                return content_type.startswith('image/')
+            # Si HEAD falla, intentar GET
+            elif response.status_code in [405, 404]:
+                response = requests.get(url, timeout=10, stream=True)
+                if response.status_code == 200:
+                    content_type = response.headers.get('content-type', '')
+                    return content_type.startswith('image/')
         return False
-    except Exception:
+    except Exception as e:
+        print(f"    Error validando URL: {e}")
         return False
 
 
@@ -34,22 +51,41 @@ def buscar_portada_musicbrainz(artista, album):
         params = {
             'query': f'artist:"{artista}" AND release:"{album}"',
             'fmt': 'json',
-            'limit': 5
+            'limit': 10
         }
         
         headers = {'User-Agent': 'PortadaDownloader/1.0 (tu-email@ejemplo.com)'}
-        response = requests.get(url, params=params, headers=headers, timeout=10)
+        response = requests.get(url, params=params, headers=headers, timeout=15)
         
         if response.status_code == 200:
             data = response.json()
-            if 'releases' in data:
-                for release in data['releases']:
+            if 'releases' in data and data['releases']:
+                print(f"  → Encontrados {len(data['releases'])} releases")
+                
+                for i, release in enumerate(data['releases'][:5]):  # Solo los primeros 5
                     release_id = release['id']
                     cover_url = f"https://coverartarchive.org/release/{release_id}/front"
                     
-                    print(f"  → Verificando: {cover_url}")
-                    if validar_url_imagen(cover_url):
-                        return cover_url
+                    print(f"  → Probando release {i+1}: {release.get('title', 'Sin título')}")
+                    print(f"    URL: {cover_url}")
+                    
+                    # Para Cover Art Archive, intentar descargar directamente sin validación previa
+                    # ya que la validación a veces falla incorrectamente
+                    try:
+                        test_response = requests.get(cover_url, timeout=10, stream=True)
+                        if test_response.status_code == 200:
+                            # Leer un poco de contenido para verificar que es una imagen
+                            content = next(test_response.iter_content(1024), b'')
+                            if len(content) > 500:  # Si tiene contenido suficiente, es probable que sea imagen
+                                print(f"    ✓ Imagen válida encontrada")
+                                return cover_url
+                            else:
+                                print(f"    ✗ Contenido insuficiente")
+                        else:
+                            print(f"    ✗ HTTP {test_response.status_code}")
+                    except Exception as e:
+                        print(f"    ✗ Error: {e}")
+                        continue
                         
         print("  → No se encontró portada válida en MusicBrainz")
         return None
@@ -92,7 +128,7 @@ def buscar_portada_discogs(artista, album):
                         if 'cover_image' in result and result['cover_image']:
                             image_url = result['cover_image']
                             print(f"  → Verificando: {image_url}")
-                            if validar_url_imagen(image_url):
+                            if validar_url_imagen(image_url, "discogs"):
                                 return image_url
                                 
         print("  → No se encontró portada válida en Discogs")
@@ -132,7 +168,7 @@ def buscar_portada_lastfm(artista, album):
                     if img.get('#text') and img['#text'].strip():
                         image_url = img['#text']
                         print(f"  → Verificando: {image_url}")
-                        if validar_url_imagen(image_url):
+                        if validar_url_imagen(image_url, "lastfm"):
                             return image_url
             elif 'error' in data:
                 print(f"  → Error de Last.fm: {data['message']}")
@@ -168,7 +204,7 @@ def buscar_portada_itunes(artista, album):
                         # Obtener la imagen en alta resolución
                         image_url = result['artworkUrl100'].replace('100x100', '600x600')
                         print(f"  → Verificando: {image_url}")
-                        if validar_url_imagen(image_url):
+                        if validar_url_imagen(image_url, "itunes"):
                             return image_url
                             
         print("  → No se encontró portada válida en iTunes")

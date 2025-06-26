@@ -364,7 +364,7 @@ printf "\n%b%s%b\n" "$GREEN" "Descargando carátulas" "$RESET"
 post_folder="$(dirname $post_file)"
 cd $post_folder
 caratula="$(/home/pepe/Scripts/python-env/bin/python3 "$post_dir"/portadas/caratula-spotify.py "$artist" "$album")"
-caratula=Error # desactivar descarga en spotify
+#caratula=Error # desactivar descarga en spotify
 
 
 # Descarga carátula de musicbrainz. _
