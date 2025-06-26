@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 #
 # Script Name: info_releases_discogs.py
 # Description: Obtener info de discogs para el MASTERID del album pasado como argumento.
@@ -49,38 +49,43 @@ if release_data:
     # Abrir el archivo en modo de agregado y escribir los datos
     with open(file_info, 'w') as output_file:
         # Obtener datos que pueden estar repetidos
-        country = release_data['country']
+        country = release_data.get('country')
         if country:
             output_file.write(f"**Pais:** {country}\n\n")
             
+        # Check if community rating exists
+        if 'community' in release_data and 'rating' in release_data['community']:
+            rating = release_data['community']['rating'].get('average')
+            count = release_data['community']['rating'].get('count')
+            if rating:
+                output_file.write(f"**Votos:** Media de {rating} con {count} votos\n\n")
 
-        rating = release_data['community']['rating']['average']
-        count = release_data['community']['rating']['count']
-        if rating:
-            output_file.write(f"**Votos:** Media de {rating} con {count} votos\n\n")
-
-        label = release_data['labels'][0]['name']
-        if label:
-            output_file.write(f"**Sello:** {label}\n\n")
+        # Check if labels exist
+        if 'labels' in release_data and len(release_data['labels']) > 0:
+            label = release_data['labels'][0].get('name')
+            if label:
+                output_file.write(f"**Sello:** {label}\n\n")
         
-        # Obtener datos de companies (etiquetas)
-        companies = release_data['companies']
-        num_companies = len(companies)
-        for i in range(num_companies):
-            label_type = companies[i]['entity_type_name']
-            label_name = companies[i]['name']
-            if label_name:
-                output_file.write(f"**{label_type}:** {label_name}\n\n")
+        # Obtener datos de companies (etiquetas) - check if exists
+        if 'companies' in release_data:
+            companies = release_data['companies']
+            num_companies = len(companies)
+            for i in range(num_companies):
+                label_type = companies[i].get('entity_type_name')
+                label_name = companies[i].get('name')
+                if label_name:
+                    output_file.write(f"**{label_type}:** {label_name}\n\n")
 
-        # Obtener datos de extraartists
-        extra_artists = release_data['extraartists']
-        num_extra_artists = len(extra_artists)
-        for i in range(num_extra_artists):
-            extra_artist_name = extra_artists[i]['name']
-            extra_artist_role = extra_artists[i]['role']
-            if extra_artist_name:
-                # Extraer el primer nombre y el rol del colaborador
-                output_file.write(f"**{extra_artist_role}** - {extra_artist_name}\n\n")
+        # Obtener datos de extraartists - check if exists first
+        if 'extraartists' in release_data:
+            extra_artists = release_data['extraartists']
+            num_extra_artists = len(extra_artists)
+            for i in range(num_extra_artists):
+                extra_artist_name = extra_artists[i].get('name')
+                extra_artist_role = extra_artists[i].get('role')
+                if extra_artist_name:
+                    # Extraer el primer nombre y el rol del colaborador
+                    output_file.write(f"**{extra_artist_role}** - {extra_artist_name}\n\n")
         
         # añade un ultimo salto de linea para mantener formato en el .md final
         output_file.write("\n\n")

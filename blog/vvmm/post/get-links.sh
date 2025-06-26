@@ -84,6 +84,7 @@ echo -e "${YELLOW}Actualizando listado de playlists y about_file.${RESET}"
 
 about_file="$HOME/hugo/web/vvmm/content/about.md"
 
+source "$HOME/Scripts/python-env/bin/activate"
 python3 "$HOME"/Scripts/hugo_scripts/playlists/spotify/sp_playlist.py
 python3 "$enlaces_dir"/spotify/sp_playlist_md.py
 rm "${about_file}"
@@ -362,8 +363,8 @@ printf "\n%b%s%b\n" "$GREEN" "Descargando carátulas" "$RESET"
 # Descarga carátula de SPOTIFY.
 post_folder="$(dirname $post_file)"
 cd $post_folder
-caratula="$(python3 "$post_dir"/portadas/caratula-spotify.py "$artist" "$album")"
-
+#caratula="$(python3 "$post_dir"/portadas/caratula-spotify.py "$artist" "$album")"
+caratula=Error # desactivar descarga en spotify
 
 
 # Descarga carátula de musicbrainz. _
@@ -457,12 +458,14 @@ echo "undraft"
 
     # Publicar con hugo.
 printf "\n%b%s%b\n" "${YELLOW}" "Creando post..." "${RESET}"
-cd ${blog}
+cd "${blog}" || exit
 hugo
 
 
 # Subir a github.
 printf "\n%b%s%b\n" "${GREEN}" "subiendo a github..." "${RESET}"
+eval "$(ssh-agent -s)" 
+ssh-add ~/.ssh/github
 git add .
 git commit -m "${artist} ${album}"
 git push

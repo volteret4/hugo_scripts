@@ -62,7 +62,7 @@ def get_artist_id(artist_name):
         response.raise_for_status()
         data = response.json()
         if data['pagination']['items'] > 0:
-            return data['results'][0]['id']
+            return data['results'][0]['id'], None  # Retorna (artist_id, None) cuando encuentra el artista
         else:
             return None, f"No se encontró ningún artista con el nombre '{artist_name}'."
     except requests.exceptions.RequestException as e:
